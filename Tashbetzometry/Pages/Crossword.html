@@ -1,0 +1,455 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="../Scripts/ajaxcall.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Crossword</title>
+    <link href="../CSS/crossCSS.css" rel="stylesheet" />
+    <script src="../Crossword-Generator-master/crossword.js"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+
+            $("#clues").hide();
+            $('#answer-form').hide();
+            //GetWordsFromDB();
+            //PostSharedCross();
+            //GetSharedCross();
+            //GetUserFromDB();
+            //PostUser();
+            //GetForgetPassFromDB();
+            //UpdatePassword();
+            //$('#cancel-button').click(closesolvefunction);
+            //$('#answer-button').click(answerfunction);
+            //$('#reveal-answer-button').click(revealanswerfunction);
+            //UpdateScore();
+            //GetAllUser();
+            //PostAddWord();
+            //GetAddWordsFromDB();
+            //UpdateLikeToWord();
+            updatAddWord();
+        });
+
+
+        // הבאת 30 מילים מוגרלות בצורת Words
+        //הפעלת הפונקציה getData
+        //הפעלת הפונקציה GetLevelFromDB
+        var keys = [];
+        var words = [];
+        var clues = [];
+        var pointer = 0;
+        function GetWordsFromDB() {
+
+            ajaxCall("GET", "../api/Words", "", GetAPSuccessCB, GetAPErrorCB);
+        }
+        function GetAPSuccessCB(data) {
+
+            for (var i = 0; i < data.length; i++) {
+                keys[pointer] = data[i].Key;
+                words[pointer] = data[i].Word;
+                clues[pointer] = data[i].Clue;
+                pointer++;
+            }
+            //המילים שהוגרלו רנדומלית
+            console.log("KeysRandom:", keys);
+            console.log("WordsRandom:", words);
+            console.log("CluesRandom:", clues);
+
+            // הבאת מילים קשות לפי רמות קושי
+            GetLevelFromDB();
+        }
+        function GetAPErrorCB(err) {
+            console.log("Error GetWords=", err);
+        }
+
+
+        //הבאת רשימת המילים המלאה בצורתה המקורית
+        //יצירת Grid
+        //הפעלת הפונקציה CountWordInCross
+        //הכנסת הגריד ל-HTML
+        var grid;
+        function GetAllDataFromDB() {
+            ajaxCall("GET", "../api/Words/GetData", "", GetdataSuccesses, GetdataError);
+        }
+        function GetdataSuccesses(data) {
+            console.log("Data:", data);
+
+            // Create crossword object with the words and clues
+            var cw = new Crossword(keys, words, clues, data);
+
+            // create the crossword grid (try to make it have a 1:1 width to height ratio in 10 tries)
+            var tries = 7;
+            grid = cw.getSquareGrid(tries);
+
+            //כל המילים בתשבץ
+            console.log("KeysAll:", keys);
+            console.log("WordsAll:", words);
+            console.log("CluesAll:", clues);
+
+            //אם התשחץ לא הצליח להכניס מילה כלשהי
+            //הגרל מילים חדשות מהדאטה
+            if (grid == null || grid == undefined) {
+                $("#crossword").hide();
+                location.reload(); // לא מתקבל בריאקט
+            } else {
+
+                //עדכון הדאטה במספר הפעמים שמילה מופיעה בכלל התשחצים
+                CountWordInCross();
+
+                //מונה את מספר הפעמים שמילה מופיעה לכל משתמש
+                CountWordForUser();
+
+                // turn the crossword grid into HTML
+                var show_answers = true;
+                document.getElementById("crossword").innerHTML = CrosswordUtils.toHtml(grid, show_answers);
+
+                // make a nice legend for the clues
+                var legend = cw.getLegend(grid);
+                $("#clues").show();
+                for (var k in legend) {
+
+                    var html = [];
+                    for (var i = 0; i < legend[k].length; i++) {
+                        //html.push("<li><strong>" + legend[k][i]['position'] + ".</strong> " + legend[k][i]['clue'] + "</li>");
+                        var element = "";
+                        element += '<li ';
+                        element += 'data-word="' + legend[k][i]['word'].replace(/"/g, '&quot;') + '" ';
+                        element += 'data-clue="' + legend[k][i]['clue'].replace(/"/g, '&quot;') + '" ';
+                        element += 'data-x="' + legend[k][i]['x'] + '" ';
+                        element += 'data-y="' + legend[k][i]['y'] + '" ';
+                        element += 'data-across="' + k + '" ';
+                        element += 'class="word-clue clickable" ';
+                        element += '>';
+                        element += legend[k][i]['position'] + ' : ';
+                        element += '<span id="';
+                        element += legend[k][i]['word'] + '-listing';
+                        element += '" ';
+                        element += 'class="linkable">';
+                        element += legend[k][i]['clue'];
+                        element += '</span>';
+                        element += '</li>';
+                        html.push(element);
+                        //html.push("<liclass='linkable clickable word-clue'><strong>" + legend[k][i]['position'] + ".</strong> " + legend[k][i]['clue'] + "</li>");
+                    }
+                    document.getElementById(k).innerHTML = html.join("\n");
+                }
+                showCrossWordOptions();
+            }
+        }
+        function GetdataError(err) {
+            console.log("Error GetData=", err);
+        }
+
+        //הבאת הדאטה לפי רמות קושי
+        function GetLevelFromDB() {
+            var level = localStorage.getItem("level");
+            ajaxCall("GET", "../api/Level/{" + level + "}", "", GetLevelSuccessCB, GetLevelErrorCB);
+        }
+        function GetLevelSuccessCB(dataLevel) {
+            console.log("levelData:", dataLevel);
+
+            var alredy = false;
+
+            for (var i = 0; i < dataLevel.length; i++) {
+                for (var j = 0; j < keys.length; j++) {
+                    if (dataLevel[i].KeyWord == keys[j]) {
+                        alredy = true;
+                    }
+                }
+                if (alredy) {
+                    break;
+                }
+                else {               
+                    keys[pointer] = dataLevel[i].KeyWord;
+                    clues[pointer] = dataLevel[i].Solution;
+                    words[pointer] = dataLevel[i].Word;
+                    pointer++;
+                }
+            }
+            //הבאת מילים קשות לפי רמת המשתמש
+            GetUserLevelFromDB();
+        }
+        function GetLevelErrorCB(err) {
+            console.log("Error GetLevelFromDB:", err);
+        }
+
+        //הבאת הדאטה לפי רמת קושי המשתמש
+        function GetUserLevelFromDB() {
+            ajaxCall("Get", "../api/WordForUser/nitzan@gmail.com/Level", "", GetUserLevelSuccessCB, GetUserLevelErrorCB);
+        }
+        function GetUserLevelSuccessCB(dataUserLevel) {
+            console.log("UserLevel:", dataUserLevel);
+
+            var alredy = false;
+
+            for (var i = 0; i < dataUserLevel.length; i++) {
+                for (var j = 0; j < keys.length; j++) {
+                    if (dataUserLevel[i].KeyWord == keys[j]) {
+                        alredy = true;
+                    }
+                }
+                if (alredy) {
+                    break;
+                }
+                else {
+                    keys[pointer] = dataUserLevel[i].KeyWord;
+                    clues[pointer] = dataUserLevel[i].Solution;
+                    words[pointer] = dataUserLevel[i].Word;
+                    pointer++;
+                }
+            }
+
+            //הבאת כל המילים מהדאטה
+            GetAllDataFromDB();
+        }
+        function GetUserLevelErrorCB(err) {
+            console.log("Error GetUserLevel:", err);
+        }
+
+
+        //כשתשבץ מוגרל-מעדכן את מספר ההופעות של כל מילה בכלל התשבצים
+        function CountWordInCross() {
+
+            var wordInCross = {
+                KeysArr: keys,
+                wordsArr: words,
+                cluesArr: clues,
+            }
+            ajaxCall("PUT", "../api/Words", JSON.stringify(wordInCross), postSuccessWICCB, postErrorWICCB);
+        }
+        function postSuccessWICCB(data) {
+            console.log("CountWordInCross Succsses!", data);
+        }
+        function postErrorWICCB(err) {
+            console.log("Error CountWordInCross=", err);
+        }
+
+
+        //כשתשבץ מוגרל-מעדכן את מספר ההופעות של כל מילה לכל משתמש
+        function CountWordForUser() {
+
+            var wordForUser = {
+                UserMail: 'nitzan@gmail.com',
+                KeysArr: keys,
+            }
+            ajaxCall("POST", "../api/WordForUser", JSON.stringify(wordForUser), PostWFUSuccess, PostWFUError);
+        }
+        function PostWFUSuccess(data) {
+            console.log("CountWordForUser Succsses!", data);
+        }
+        function PostWFUError(err) {
+            console.log("Error CountWordForUser:", err);
+        }
+
+
+        //הבאת כל הפרטים של המשתמש לאימות כניסה - ריאקט
+        function GetUserFromDB() {
+            ajaxCall("Get", "../api/User/nitzan@gmail.com/ni123", "", GetUserSuccess, GetUserError);
+        }
+        function GetUserSuccess(data) {
+            console.log("UserDetails:", data);
+        }
+        function GetUserError(err) {
+            console.log("Error GetUser:", err);
+        }
+
+
+        //יצירת משתמש חדש - ריאקט
+        function PostUser() {
+            var user = {
+                FirstName: 'rotem',
+                LastName: 'abeccassis',
+                Mail: 'rotem@gmail.com',
+                UserName: 'rot',
+                Password: 'rot123'
+            }
+            ajaxCall("POST", "../api/User", JSON.stringify(user), PostSuccessCB, PostErrorCB)
+        }
+        function PostSuccessCB(data) {
+            console.log("PostUser Succsses!", data);
+        }
+        function PostErrorCB(err) {
+            console.log("Error PostUser:", err);
+        }
+
+        //הבאת שם משתמש וסיסמה עבור שכחתי סיסמה- ריאקט
+        function GetForgetPassFromDB() {
+            ajaxCall("Get", "../api/User/nitzan@gmail.com/", "", GetForgetPassSuccess, GetForgetPassError);
+        }
+        function GetForgetPassSuccess(data) {
+            console.log("ForgetDetails:", data);
+        }
+        function GetForgetPassError(err) {
+            console.log("Error GetForgetPass:", err);
+        }
+
+        //עדכון סיסמה חדשה- ריאקט
+        function UpdatePassword() {
+            var user = {
+                Mail: 'rotem@gmail.com',
+                Password: '1234'
+            }
+            ajaxCall("PUT", "../api/User/ForgetPass", JSON.stringify(user), UpdatePasswordSuccess, UpdatePasswordError);
+        }
+        function UpdatePasswordSuccess(data) {
+            console.log("UpdatePassword Succsses!", data);
+        }
+        function UpdatePasswordError(err) {
+            console.log("Error UpdatePassword:", err);
+        }
+
+        //עדכון ניקוד- ריאקט
+        function UpdateScore() {
+            var score = {
+                Mail: 'nitzan@gmail.com',
+                Score: 5
+            }
+            ajaxCall("PUT", "../api/User/Score", JSON.stringify(score), UpdateScoreSuccess, UpdateScoreError)
+        }
+        function UpdateScoreSuccess(data) {
+            console.log("UpdateScore Succsses!", data);
+        }
+        function UpdateScoreError(err) {
+            console.log("Error UpdateScore:", err);
+        }
+
+        //הבאת כל המשתמשים לריאקט
+        function GetAllUser() {
+            ajaxCall("GET", "../api/User", "", GetAllUserSuccesses, GetAllUserError);
+        }
+        function GetAllUserSuccesses(data) {
+            console.log("GetAllUserSuccesses", data);
+        }
+        function GetAllUserError() {
+            console.log("GetAllUserError", err);
+        }
+
+        //הכנסת התשבץ ששותף לטבלה בדאטה בייס
+        function PostSharedCross() {
+
+            var crossDetails = {
+                SendFrom: "nitzan@gmail.com",
+                SendTo: "sarin@gmail.com",
+                Grid: '[[null,null,null,null,null,null,null,null,null,null,null,{"char":"ג","across":null,"down":{"is_start_of_word":true,"index":4,"isShow":false}},null],[null,null,null,null,null,null,null,null,null,{"char":"ד","across":null,"down":{"is_start_of_word":true,"index":0,"isShow":false}},null,{"char":"ל","across":null,"down":{"is_start_of_word":false,"index":4,"isShow":false}},null],[null,null,null,null,null,null,null,null,{"char":"ק","across":{"is_start_of_word":true,"index":11,"isShow":false},"down":null},{"char":"ר","across":{"is_start_of_word":false,"index":11,"isShow":false},"down":{"is_start_of_word":false,"index":0,"isShow":false}},{"char":"ד","across":{"is_start_of_word":false,"index":11,"isShow":false},"down":null},{"char":"י","across":{"is_start_of_word":false,"index":11,"isShow":false},"down":{"is_start_of_word":false,"index":4,"isShow":false}},{"char":"ט","across":{"is_start_of_word":false,"index":11,"isShow":false},"down":{"is_start_of_word":true,"index":22,"isShow":false}}],[null,null,null,null,null,null,null,null,null,{"char":"ד","across":null,"down":{"is_start_of_word":false,"index":0,"isShow":false}},null,{"char":"ל","across":null,"down":{"is_start_of_word":true,"index":23,"isShow":false}},{"char":"ב","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"ז","across":null,"down":{"is_start_of_word":true,"index":6,"isShow":false}},null,{"char":"ק","across":{"is_start_of_word":true,"index":14,"isShow":false},"down":{"is_start_of_word":true,"index":12,"isShow":false}},{"char":"ד","across":{"is_start_of_word":false,"index":14,"isShow":false},"down":null},{"char":"י","across":{"is_start_of_word":false,"index":14,"isShow":false},"down":null},{"char":"מ","across":{"is_start_of_word":false,"index":14,"isShow":false},"down":null},null,{"char":"ש","across":{"is_start_of_word":true,"index":1,"isShow":false},"down":null},{"char":"ר","across":{"is_start_of_word":false,"index":1,"isShow":false},"down":null},{"char":"ר","across":{"is_start_of_word":false,"index":1,"isShow":false},"down":{"is_start_of_word":false,"index":0,"isShow":false}},{"char":"ה","across":{"is_start_of_word":false,"index":1,"isShow":false},"down":null},{"char":"ב","across":null,"down":{"is_start_of_word":false,"index":23,"isShow":false}},{"char":"ע","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"ר","across":{"is_start_of_word":true,"index":9,"isShow":false},"down":{"is_start_of_word":false,"index":6,"isShow":false}},{"char":"א","across":{"is_start_of_word":false,"index":9,"isShow":false},"down":{"is_start_of_word":true,"index":24,"isShow":false}},{"char":"י","across":{"is_start_of_word":true,"index":15,"isShow":false},"down":{"is_start_of_word":false,"index":12,"isShow":false}},{"char":"ל","across":{"is_start_of_word":false,"index":15,"isShow":false},"down":null},{"char":"ד","across":{"is_start_of_word":false,"index":15,"isShow":false},"down":null},{"char":"ו","across":{"is_start_of_word":false,"index":15,"isShow":false},"down":null},{"char":"ת","across":{"is_start_of_word":false,"index":15,"isShow":false},"down":null},{"char":"י","across":{"is_start_of_word":false,"index":15,"isShow":false},"down":null},null,{"char":"ס","across":null,"down":{"is_start_of_word":false,"index":0,"isShow":false}},null,{"char":"ד","across":null,"down":{"is_start_of_word":false,"index":23,"isShow":false}},{"char":"ת","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"מ","across":null,"down":{"is_start_of_word":true,"index":25,"isShow":false}},{"char":"ה","across":null,"down":{"is_start_of_word":false,"index":24,"isShow":false}},{"char":"ו","across":null,"down":{"is_start_of_word":false,"index":12,"isShow":false}},null,null,null,{"char":"ב","across":null,"down":{"is_start_of_word":true,"index":3,"isShow":false}},null,null,{"char":"י","across":null,"down":{"is_start_of_word":false,"index":0,"isShow":false}},null,{"char":"ו","across":null,"down":{"is_start_of_word":false,"index":23,"isShow":false}},{"char":"פ","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"א","across":null,"down":{"is_start_of_word":false,"index":25,"isShow":false}},{"char":"ד","across":null,"down":{"is_start_of_word":false,"index":24,"isShow":false}},{"char":"מ","across":{"is_start_of_word":true,"index":2,"isShow":false},"down":{"is_start_of_word":false,"index":12,"isShow":false}},{"char":"ע","across":{"is_start_of_word":false,"index":2,"isShow":false},"down":null},{"char":"ל","across":{"is_start_of_word":false,"index":2,"isShow":false},"down":null},{"char":"ה","across":{"is_start_of_word":false,"index":2,"isShow":false},"down":null},{"char":"א","across":{"is_start_of_word":false,"index":2,"isShow":false},"down":{"is_start_of_word":false,"index":3,"isShow":false}},{"char":"ד","across":{"is_start_of_word":false,"index":2,"isShow":false},"down":null},{"char":"י","across":{"is_start_of_word":false,"index":2,"isShow":false},"down":null},{"char":"מ","across":{"is_start_of_word":false,"index":2,"isShow":false},"down":{"is_start_of_word":false,"index":0,"isShow":false}},null,null,{"char":"ו","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"ח","across":null,"down":{"is_start_of_word":false,"index":25,"isShow":false}},{"char":"ה","across":null,"down":{"is_start_of_word":false,"index":24,"isShow":false}},null,null,null,null,{"char":"ב","across":{"is_start_of_word":true,"index":16,"isShow":false},"down":{"is_start_of_word":false,"index":3,"isShow":false}},{"char":"ד","across":{"is_start_of_word":false,"index":16,"isShow":false},"down":null},{"char":"י","across":{"is_start_of_word":false,"index":16,"isShow":false},"down":null},{"char":"מ","across":{"is_start_of_word":false,"index":16,"isShow":false},"down":null},{"char":"ו","across":{"is_start_of_word":false,"index":16,"isShow":false},"down":null},{"char":"ס","across":{"is_start_of_word":false,"index":16,"isShow":false},"down":null},{"char":"ל","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"ר","across":null,"down":{"is_start_of_word":false,"index":25,"isShow":false}},null,null,null,null,null,{"char":"י","across":{"is_start_of_word":true,"index":17,"isShow":false},"down":{"is_start_of_word":false,"index":3,"isShow":false}},{"char":"צ","across":{"is_start_of_word":false,"index":17,"isShow":false},"down":null},{"char":"ו","across":{"is_start_of_word":false,"index":17,"isShow":false},"down":null},{"char":"ר","across":{"is_start_of_word":false,"index":17,"isShow":false},"down":null},{"char":"ח","across":{"is_start_of_word":false,"index":17,"isShow":false},"down":null},{"char":"י","across":{"is_start_of_word":false,"index":17,"isShow":false},"down":null},{"char":"י","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"ל","across":null,"down":{"is_start_of_word":false,"index":25,"isShow":false}},{"char":"ע","across":{"is_start_of_word":true,"index":10,"isShow":false},"down":{"is_start_of_word":true,"index":26,"isShow":false}},{"char":"ד","across":{"is_start_of_word":false,"index":10,"isShow":false},"down":{"is_start_of_word":true,"index":13,"isShow":false}},{"char":"ח","across":{"is_start_of_word":false,"index":10,"isShow":false},"down":null},{"char":"ו","across":{"is_start_of_word":false,"index":10,"isShow":false},"down":null},{"char":"ר","across":{"is_start_of_word":false,"index":10,"isShow":false},"down":null},{"char":"מ","across":{"is_start_of_word":false,"index":10,"isShow":false},"down":{"is_start_of_word":false,"index":3,"isShow":false}},{"char":"ה","across":{"is_start_of_word":true,"index":18,"isShow":false},"down":null},{"char":"א","across":{"is_start_of_word":false,"index":18,"isShow":false},"down":null},{"char":"כ","across":{"is_start_of_word":false,"index":18,"isShow":false},"down":null},{"char":"י","across":{"is_start_of_word":false,"index":18,"isShow":false},"down":null},{"char":"ל","across":{"is_start_of_word":false,"index":18,"isShow":false},"down":null},{"char":"ק","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"ב","across":null,"down":{"is_start_of_word":false,"index":25,"isShow":false}},{"char":"ב","across":null,"down":{"is_start_of_word":false,"index":26,"isShow":false}},{"char":"ל","across":null,"down":{"is_start_of_word":false,"index":13,"isShow":false}},null,null,null,{"char":"י","across":{"is_start_of_word":true,"index":19,"isShow":false},"down":{"is_start_of_word":false,"index":3,"isShow":false}},{"char":"ק","across":{"is_start_of_word":false,"index":19,"isShow":false},"down":null},{"char":"ר","across":{"is_start_of_word":false,"index":19,"isShow":false},"down":null},{"char":"ע","across":{"is_start_of_word":false,"index":19,"isShow":false},"down":null},{"char":"ר","across":{"is_start_of_word":false,"index":19,"isShow":false},"down":null},{"char":"כ","across":{"is_start_of_word":false,"index":19,"isShow":false},"down":null},{"char":"ר","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"ו","across":null,"down":{"is_start_of_word":false,"index":25,"isShow":false}},{"char":"ו","across":null,"down":{"is_start_of_word":false,"index":26,"isShow":false}},{"char":"פ","across":{"is_start_of_word":true,"index":5,"isShow":false},"down":{"is_start_of_word":false,"index":13,"isShow":false}},{"char":"ח","across":{"is_start_of_word":false,"index":5,"isShow":false},"down":null},{"char":"ד","across":{"is_start_of_word":false,"index":5,"isShow":false},"down":null},null,{"char":"מ","across":{"is_start_of_word":true,"index":7,"isShow":false},"down":{"is_start_of_word":false,"index":3,"isShow":false}},{"char":"ג","across":{"is_start_of_word":false,"index":7,"isShow":false},"down":null},{"char":"ש","across":{"is_start_of_word":true,"index":20,"isShow":false},"down":null},{"char":"א","across":{"is_start_of_word":false,"index":20,"isShow":false},"down":null},{"char":"ו","across":{"is_start_of_word":false,"index":20,"isShow":false},"down":null},{"char":"ל","across":{"is_start_of_word":false,"index":20,"isShow":false},"down":null},{"char":"ט","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[{"char":"א","across":null,"down":{"is_start_of_word":false,"index":25,"isShow":false}},{"char":"ט","across":null,"down":{"is_start_of_word":false,"index":26,"isShow":false}},{"char":"ו","across":null,"down":{"is_start_of_word":false,"index":13,"isShow":false}},null,null,null,null,null,null,null,null,null,{"char":"ס","across":null,"down":{"is_start_of_word":false,"index":22,"isShow":false}}],[null,null,{"char":"נ","across":{"is_start_of_word":true,"index":8,"isShow":false},"down":{"is_start_of_word":false,"index":13,"isShow":false}},{"char":"ג","across":{"is_start_of_word":false,"index":8,"isShow":false},"down":null},{"char":"ע","across":{"is_start_of_word":true,"index":21,"isShow":false},"down":null},{"char":"ב","across":{"is_start_of_word":false,"index":21,"isShow":false},"down":null},{"char":"ו","across":{"is_start_of_word":false,"index":21,"isShow":false},"down":null},{"char":"ד","across":{"is_start_of_word":false,"index":21,"isShow":false},"down":null},{"char":"ה","across":{"is_start_of_word":false,"index":21,"isShow":false},"down":null},{"char":"ז","across":{"is_start_of_word":false,"index":21,"isShow":false},"down":null},{"char":"ר","across":{"is_start_of_word":false,"index":21,"isShow":false},"down":null},{"char":"ה","across":{"is_start_of_word":false,"index":21,"isShow":false},"down":null},null]]',
+                Keys: '["תלמידחכם-למדן","שוט-פרגול","מכרמזון-השביר","חלקמהלילה-אשמורת","קצררוח-חסרסבלנות","גר-נוכרי","התנגד-מחה","נגוהה-זיו","רבתי-מורחבת","נאד-שקעורלנוזלים","קטיפה-אריה","דחי-כישלון","ראי-אספקלריה","שית-יסוד","קרדיט-אשראי","סולד-נרתע","כדישלא-לבל","הביאבדחיפות-הבהיל","תאווה-בולמוס","קובעת-אגן","צביון-צורה","רבותא-דברשישבוחידוש","ויכוח-ריב","הוזז-הותק","לבדו-בגפו","לביא-אריה","דאבה-דכדוך","ילדותי-אינפנטילי","שאוןהגלים-דכי","כאבים-מחושים","דהיורה-בכח","כולל-אינטגרלי","יועיל-יסכון"]',
+                Words: '["תלמידחכמ","שוט","מכרמזונ","חלקמהליל","קצררוח","גר","התנגד","נגוהה","רבתי","נאד","קטיפה","דחי","ראי","שית","קרדיט","סולד","כדישלא","הביאבדחיפות","תאווה","קובעת","צביונ","רבותא","ויכוח","הוזז","לבדו","לביא","דאבה","ילדותי","שאונהגלימ","כאבימ","דהיורה","כולל","יועיל"]',
+                Clues: '["למדן","פרגול","השביר","אשמורת","חסר סבלנות","נוכרי","מחה","זיו","מורחבת","שק עור לנוזלים","אריה","כישלון","אספקלריה","יסוד","אשראי","נרתע","לבל","הבהיל","בולמוס","אגן","צורה","דבר שיש בו חידוש","ריב","הותק","בגפו","אריה","דכדוך","אינפנטילי","דכי","מחושים","בכח","אינטגרלי","יסכון"]',
+                Legend: '{"across":[{"position":1,"x":2,"y":0,"index":17,"clue":"הבהיל","word":"הביאבדחיפות"},{"position":2,"x":0,"y":1,"index":13,"clue":"יסוד","word":"שית"},{"position":3,"x":2,"y":1,"index":18,"clue":"בולמוס","word":"תאווה"},{"position":4,"x":8,"y":1,"index":19,"clue":"אגן","word":"קובעת"},{"position":5,"x":2,"y":2,"index":9,"clue":"שק עור לנוזלים","word":"נאד"},{"position":6,"x":8,"y":2,"index":20,"clue":"צורה","word":"צביונ"},{"position":8,"x":7,"y":3,"index":5,"clue":"נוכרי","word":"גר"},{"position":9,"x":8,"y":3,"index":21,"clue":"דבר שיש בו חידוש","word":"רבותא"},{"position":10,"x":1,"y":4,"index":16,"clue":"לבל","word":"כדישלא"},{"position":12,"x":8,"y":4,"index":12,"clue":"אספקלריה","word":"ראי"},{"position":13,"x":8,"y":5,"index":22,"clue":"ריב","word":"ויכוח"},{"position":14,"x":3,"y":6,"index":0,"clue":"למדן","word":"תלמידחכמ"},{"position":18,"x":5,"y":7,"index":23,"clue":"הותק","word":"הוזז"},{"position":19,"x":5,"y":8,"index":24,"clue":"בגפו","word":"לבדו"},{"position":20,"x":10,"y":8,"index":8,"clue":"מורחבת","word":"רבתי"},{"position":22,"x":3,"y":9,"index":10,"clue":"אריה","word":"קטיפה"},{"position":24,"x":5,"y":10,"index":25,"clue":"אריה","word":"לביא"},{"position":25,"x":0,"y":11,"index":15,"clue":"נרתע","word":"סולד"},{"position":26,"x":3,"y":11,"index":26,"clue":"דכדוך","word":"דאבה"},{"position":27,"x":8,"y":11,"index":7,"clue":"זיו","word":"נגוהה"},{"position":28,"x":3,"y":12,"index":27,"clue":"אינפנטילי","word":"ילדותי"}],"down":[{"position":1,"x":2,"y":0,"index":6,"clue":"מחה","word":"התנגד"},{"position":2,"x":0,"y":1,"index":28,"clue":"דכי","word":"שאונהגלימ"},{"position":4,"x":8,"y":1,"index":4,"clue":"חסר סבלנות","word":"קצררוח"},{"position":7,"x":5,"y":3,"index":3,"clue":"אשמורת","word":"חלקמהליל"},{"position":10,"x":1,"y":4,"index":29,"clue":"מחושים","word":"כאבימ"},{"position":11,"x":2,"y":4,"index":30,"clue":"בכח","word":"דהיורה"},{"position":15,"x":9,"y":6,"index":31,"clue":"אינטגרלי","word":"כולל"},{"position":16,"x":10,"y":6,"index":2,"clue":"השביר","word":"מכרמזונ"},{"position":17,"x":13,"y":6,"index":11,"clue":"כישלון","word":"דחי"},{"position":21,"x":13,"y":8,"index":32,"clue":"יסכון","word":"יועיל"},{"position":22,"x":3,"y":9,"index":14,"clue":"אשראי","word":"קרדיט"},{"position":23,"x":1,"y":10,"index":1,"clue":"פרגול","word":"שוט"}]}'
+            }
+            ajaxCall("POST", "../api/SharedCross", JSON.stringify(crossDetails), PostSharedCrossSuccess, PostSharedCrossError)
+        }
+        function PostSharedCrossSuccess(data) {
+            console.log("PostSharedCross Succsses!", data);
+        }
+        function PostSharedCrossError(err) {
+            console.log("Error PostSharedCross:", err);
+        }
+
+        //הבאת השתבץ ששותף למשתמש הנבחר
+        function GetSharedCross() {
+            ajaxCall("GET", "../api/SharedCross/sarin@gmail.com/", "", GetSharedCrossSuccesses, GetSharedCrossError);
+        }
+        function GetSharedCrossSuccesses(data) {
+            console.log("GetSharedCross Successes:", data);
+        }
+        function GetSharedCrossError() {
+            console.log("GetSharedCross Error:", err);
+        }
+
+        //עדכון הגדרה חדשה שהמשתמש הכניס
+        function PostAddWord() {
+
+            var addWord = {
+                UserMail: "nitzan@gmail.com",
+                WordKey: "רותם-אבקסיס",
+                NumOfLike: 0
+            }
+
+            ajaxCall("POST", "../api/AddWord", JSON.stringify(addWord), PostAddWordSuccess, PostAddWordError)
+        }
+        function PostAddWordSuccess(data) {
+            console.log("PostAddWord Succsses!", data);
+        }
+        function PostAddWordError(err) {
+            console.log("Error PostAddWord:", err);
+        }
+
+        //הבאת המשתמש והמילים החדשות שמעוניין להוסיף
+        function GetAddWordsFromDB() {
+
+            ajaxCall("GET", "../api/AddWord", "", GetAddWordSuccessCB, GetAddWordErrorCB);
+        }
+        function GetAddWordSuccessCB(data) {
+            console.log("GetAddWordSuccessCB Successes:", data);
+        }
+        function GetAddWordErrorCB() {
+            console.log("GetAddWordErrorCB Error:", err);
+        }
+
+        //עדכון לייקים להגדרה חדשה 
+        function UpdateLikeToWord() {
+
+            var addWord = {
+                UserMail: "nitzan@gmail.com",
+                WordKey: "סרין-רותם",
+                NumOfLike: '3'
+            }
+
+            ajaxCall("PUT", "../api/AddWord/AddLike", JSON.stringify(addWord), UpdateLikeToWordSuccess, UpdateLikeToWordError)
+        }
+        function UpdateLikeToWordSuccess(data) {
+            console.log("UpdateLikeToWord Succsses!", data);
+        }
+        function UpdateLikeToWordError(err) {
+            console.log("Error UpdateLikeToWord:", err);
+        }
+
+        //מחיקת הגדרות שהוצעו להוספה וקיבלו מעל 10 לייקים
+        function updatAddWord() {
+
+            ajaxCall("PUT", "../api/AddWord/deletTen", "", GetAPSuccessCB, GetAPErrorCB);
+        }
+        function GetAPSuccessCB(data) {
+
+            console.log("ok");
+        }
+        function GetAPErrorCB(err) {
+            console.log("Error GetWords=", err);
+        }
+
+
+    </script>
+</head>
+<body>
+    <h1 style="text-align:center">תשבצומטרי</h1></br>
+    <div id="crossword"></div>
+    <table id="clues">
+        <thead>
+            <tr>
+                <th>מאוזן</th>
+                <th>מאונך</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><ul id="across"></ul></td>
+                <td><ul id="down"></ul></td>
+            </tr>
+        </tbody>
+    </table>
+    <div id="answer-form">
+        <div class="short-margin">
+
+            <p id="position-and-clue"></p>
+
+            <p>הזן תשובה:<input id="solution-answer" type="text" size="40" /></p>
+
+            <p id="answer-results" class="hidden"></p>
+
+            <p><input type="button" id="cancel-button" value="ביטול" /> <input type="button" id="answer-button" value="בדוק תשובה" /> <input type="button" id="reveal-answer-button" value="רמז" /></p>
+
+        </div>
+    </div>
+</body>
+</html>

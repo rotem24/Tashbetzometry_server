@@ -612,16 +612,32 @@ namespace Tashbetzometry.Models.DAL
         }
         private string BuildSharedCrossCommand(SharedCross sc)
         {
-            string command;
-            StringBuilder sb = new StringBuilder();
-            string prefix = $"INSERT INTO SharedCross VALUES ('{sc.SendFrom}', '{sc.SendTo}', '{sc.Grid}', '{sc.Keys}', '{sc.Words}', '{sc.Clues}', '{sc.Legend}');";
-            command = prefix + sb.ToString();
-            return command;
+            if (sc.SendTo.Length <= 1)
+            {
+                string command;
+                StringBuilder sb = new StringBuilder();
+                string prefix = $"INSERT INTO SharedCross VALUES ('{sc.SendFrom}', '{sc.SendTo}', '{sc.Grid}', '{sc.Keys}', '{sc.Words}', '{sc.Clues}', '{sc.Legend}');";
+                command = prefix + sb.ToString();
+                return command;
+            }
+            else
+            {
+				string str = "";
+				for (int i = 0; i < sc.SendTo.Length; i++)
+				{
+					str += SharedCross(sc.SendFrom, sc.SendTo[i], sc.Grid, sc.Keys, sc.Words, sc.Clues, sc.Legend);
+				}
+				return str;
+			}
         }
+		private string SharedCross (string sf, string st, string g, string k, string w, string c, string l)
+        {
+			return $"INSERT INTO SharedCross VALUES ('{sf}', '{st}', '{g}', '{k}', '{w}', '{c}', '{l}');";
+		}
 
 
-        //הבאת השתבץ ששותף עבור המשתמש
-        public SharedCross GetSharedCross(string mail)
+		//הבאת השתבץ ששותף עבור המשתמש
+		public SharedCross GetSharedCross(string mail)
         {
             SqlConnection con = null;
             try
@@ -635,7 +651,7 @@ namespace Tashbetzometry.Models.DAL
                 {
                     sc.CrossNum = (int)(dr["CrossNum"]);
                     sc.SendFrom = Convert.ToString(dr["SendFrom"]);
-                    sc.SendTo = Convert.ToString(dr["SendTo"]);
+                    sc.SendToGet = Convert.ToString(dr["SendTo"]);
                     sc.Grid = Convert.ToString(dr["Grid"]);
                     sc.Keys = Convert.ToString(dr["Keys"]);
                     sc.Words = Convert.ToString(dr["Words"]);

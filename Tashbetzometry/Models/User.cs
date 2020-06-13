@@ -15,13 +15,14 @@ namespace Tashbetzometry.Models
 		string lastName;
 		string image;
         int score;
+		string theme;
 
 		public User()
 		{
 
 		}
 
-		public User(string mail, string userName, string password, string firstName, string lastName, string image, int score)
+		public User(string mail, string userName, string password, string firstName, string lastName, string image, int score, string theme)
 		{
 			Mail = mail;
 			UserName = userName;
@@ -30,6 +31,7 @@ namespace Tashbetzometry.Models
 			LastName = lastName;
 			Image = image;
             Score = score;
+			Theme = theme;
 		}
 
 		public User(string mail, string password)
@@ -45,9 +47,11 @@ namespace Tashbetzometry.Models
 		public string LastName { get => lastName; set => lastName = value; }
 		public string Image { get => image; set => image = value; }
         public int Score { get => score; set => score = value; }
+		public string Theme { get => theme; set => theme = value; }
 
-        //login
-        public User GetUserFromDB(string mail, string password)
+
+		//login
+		public User GetUserFromDB(string mail, string password)
 		{
 			DBService db = new DBService();
 			return db.GetUserFromDB(mail, password);
@@ -94,5 +98,12 @@ namespace Tashbetzometry.Models
             DBService db = new DBService();
             return db.GetAllUsersFromDB();
         }
-    }
+		//עדכון ערכת צבעים
+		public int UpdateThemeDB(User user)//copy
+		{
+			DBService db = new DBService();
+			return db.UpdateThemeDB(user);
+		}
+
+	}
 }

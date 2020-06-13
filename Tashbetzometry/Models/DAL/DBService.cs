@@ -141,7 +141,8 @@ namespace Tashbetzometry.Models.DAL
 					u.LastName = Convert.ToString(dr["LastName"]);
 					u.Image = Convert.ToString(dr["Image"]);
                     u.Score = (int)(dr["Score"]);
-                }
+					u.Theme = Convert.ToString(dr["Theme"]);
+				}
 				return u;
 			}
 			catch (Exception ex)
@@ -178,7 +179,8 @@ namespace Tashbetzometry.Models.DAL
 					u.LastName = Convert.ToString(dr["LastName"]);
 					u.Image = Convert.ToString(dr["Image"]);
                     u.Score = (int)(dr["Score"]);
-                }
+					u.Theme = Convert.ToString(dr["Theme"]);
+				}
 				return u;
 			}
 			catch (Exception ex)
@@ -265,7 +267,7 @@ namespace Tashbetzometry.Models.DAL
 		{
 			string command;
 			StringBuilder sb = new StringBuilder();
-			string prefix = $"INSERT INTO [User] (FirstName, LastName, Mail, UserName, [Password], Image, Score) VALUES ('{user.FirstName}', '{user.LastName}', '{user.Mail}', '{user.UserName}', '{user.Password}', '{user.Image}', '{user.Score}');";
+			string prefix = $"INSERT INTO [User] (FirstName, LastName, Mail, UserName, [Password], Image, Score, Theme) VALUES ('{user.FirstName}', '{user.LastName}', '{user.Mail}', '{user.UserName}', '{user.Password}', '{user.Image}', '{user.Score}', '{user.Theme}');";//copy show theme 2
 			command = prefix + sb.ToString();
 			return command;
 		}
@@ -557,7 +559,8 @@ namespace Tashbetzometry.Models.DAL
                     u.LastName = Convert.ToString(dr["LastName"]);
                     u.Image = Convert.ToString(dr["Image"]);
                     u.Score = (int)(dr["Score"]);
-                    users.Add(u);
+					u.Theme = Convert.ToString(dr["Theme"]);
+					users.Add(u);
                 }
                
                 return users;
@@ -828,5 +831,49 @@ namespace Tashbetzometry.Models.DAL
             }
         }
 
-    }
+		//עדכון ערכת צבעים למשתמש
+		public int UpdateThemeDB(User user)//copy
+		{
+			SqlConnection con;
+			SqlCommand cmd;
+			try
+			{
+				con = Connect("DBConnectionString");
+			}
+			catch (Exception ex)
+			{
+				// write to log
+				throw ex;
+			}
+			try
+			{
+				string cStr = BuildUpdateThemeCommand(user);
+				cmd = CreateCommand(cStr, con);
+				int numEffected = cmd.ExecuteNonQuery();
+				return numEffected;
+			}
+			catch (Exception ex)
+			{
+				return 0;
+				throw (ex);
+			}
+			finally
+			{
+				if (con != null)
+				{
+					con.Close();
+				}
+			}
+		}
+		private string BuildUpdateThemeCommand(User user)
+		{
+			string command;
+			StringBuilder sb = new StringBuilder();
+			string prefix = $"UPDATE [User] SET [Theme] = '{user.Theme}'  WHERE mail = '{user.Mail}'";
+			command = prefix + sb.ToString();
+			return command;
+		}
+
+
+	}
 }

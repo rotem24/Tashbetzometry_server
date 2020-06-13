@@ -69,8 +69,16 @@ namespace Tashbetzometry.Controllers
             u.UpdateScoreDB(user);
         }
 
-        // DELETE api/<controller>/5
-        public void Delete(int id)
+		[HttpPut]
+		[Route("api/User/Theme")]
+		public void PutTheme([FromBody] User user)
+		{
+			User u = new User();
+			u.UpdateThemeDB(user);
+		}
+
+		// DELETE api/<controller>/5
+		public void Delete(int id)
 		{
 		}
 	}

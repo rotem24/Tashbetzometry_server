@@ -16,6 +16,7 @@ namespace Tashbetzometry.Models
         string words;
         string clues;
         string legend;
+        string a;
 
         public SharedCross()
         {
@@ -44,6 +45,7 @@ namespace Tashbetzometry.Models
             Words = words;
             Clues = clues;
             Legend = legend;
+
         }
 
         public int CrossNum { get => crossNum; set => crossNum = value; }

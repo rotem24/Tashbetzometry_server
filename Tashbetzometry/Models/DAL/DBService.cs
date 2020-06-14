@@ -831,8 +831,9 @@ namespace Tashbetzometry.Models.DAL
             }
         }
 
+
 		//עדכון ערכת צבעים למשתמש
-		public int UpdateThemeDB(User user)//copy
+		public int UpdateThemeDB(User user)
 		{
 			SqlConnection con;
 			SqlCommand cmd;

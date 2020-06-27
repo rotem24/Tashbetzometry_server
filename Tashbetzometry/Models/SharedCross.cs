@@ -66,7 +66,7 @@ namespace Tashbetzometry.Models
             return numAffected;
         }
 
-        public SharedCross GetSharedCross(string mail)
+        public List<SharedCross> GetSharedCross(string mail)
         {
             DBService db = new DBService();
             return db.GetSharedCross(mail);

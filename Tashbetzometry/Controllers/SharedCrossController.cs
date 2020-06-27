@@ -19,7 +19,7 @@ namespace Tashbetzometry.Controllers
         // GET api/SharedCross/{mail}/
         [HttpGet]
         [Route("api/SharedCross/{mail}/")]
-        public SharedCross Get(string mail)
+        public List<SharedCross> Get(string mail)
         {
             SharedCross sc = new SharedCross();
             return sc.GetSharedCross(mail);

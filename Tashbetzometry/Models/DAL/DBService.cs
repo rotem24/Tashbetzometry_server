@@ -640,19 +640,21 @@ namespace Tashbetzometry.Models.DAL
 
 
 		//הבאת השתבץ ששותף עבור המשתמש
-		public SharedCross GetSharedCross(string mail)
+		public List<SharedCross> GetSharedCross(string mail)
         {
-            SqlConnection con = null;
+			List<SharedCross> shareds = new List<SharedCross>();
+			SqlConnection con = null;
             try
             {
                 con = Connect("DBConnectionString");
                 String selectSTR = "select * from SharedCross where SendTo = '" + mail + "'";
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-                SharedCross sc = new SharedCross();
+       
                 while (dr.Read())
                 {
-                    sc.CrossNum = (int)(dr["CrossNum"]);
+					SharedCross sc = new SharedCross();
+					sc.CrossNum = (int)(dr["CrossNum"]);
                     sc.SendFrom = Convert.ToString(dr["SendFrom"]);
                     sc.SendToGet = Convert.ToString(dr["SendTo"]);
                     sc.Grid = Convert.ToString(dr["Grid"]);
@@ -660,8 +662,9 @@ namespace Tashbetzometry.Models.DAL
                     sc.Words = Convert.ToString(dr["Words"]);
                     sc.Clues = Convert.ToString(dr["Clues"]);
                     sc.Legend = Convert.ToString(dr["Legend"]);
+					shareds.Add(sc);
                 }
-                return sc;
+                return shareds;
             }
             catch (Exception ex)
             {

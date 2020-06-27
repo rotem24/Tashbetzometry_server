@@ -10,6 +10,10 @@ namespace Tashbetzometry.Models
     {
         int crossNum;
         string sendFrom;
+        string userName;
+        string firstName;
+        string lastName;
+        string image;
         string sendToGet;
         string[] sendTo;
         string grid;
@@ -17,6 +21,20 @@ namespace Tashbetzometry.Models
         string words;
         string clues;
         string legend;
+
+        public int CrossNum { get => crossNum; set => crossNum = value; }
+        public string SendFrom { get => sendFrom; set => sendFrom = value; }
+        public string UserName { get => userName; set => userName = value; }
+        public string FirstName { get => firstName; set => firstName = value; }
+        public string LastName { get => lastName; set => lastName = value; }
+        public string Image { get => image; set => image = value; }
+        public string SendToGet { get => sendToGet; set => sendToGet = value; }
+        public string[] SendTo { get => sendTo; set => sendTo = value; }
+        public string Grid { get => grid; set => grid = value; }
+        public string Keys { get => keys; set => keys = value; }
+        public string Words { get => words; set => words = value; }
+        public string Clues { get => clues; set => clues = value; }
+        public string Legend { get => legend; set => legend = value; }
 
         public SharedCross()
         {
@@ -48,16 +66,21 @@ namespace Tashbetzometry.Models
 
         }
 
-        public int CrossNum { get => crossNum; set => crossNum = value; }
-        public string SendFrom { get => sendFrom; set => sendFrom = value; }
-        public string SendToGet { get => sendToGet; set => sendToGet = value; }
-        public string[] SendTo { get => sendTo; set => sendTo = value; }
-        public string Grid { get => grid; set => grid = value; }
-        public string Keys { get => keys; set => keys = value; }
-        public string Words { get => words; set => words = value; }
-        public string Clues { get => clues; set => clues = value; }
-        public string Legend { get => legend; set => legend = value; }
-
+        public SharedCross(int crossNum, string sendFrom, string userName, string firstName, string lastName, string image, string sendToGet, string grid, string keys, string words, string clues, string legend)
+        {
+            CrossNum = crossNum;
+            SendFrom = sendFrom;
+            UserName = userName;
+            FirstName = firstName;
+            LastName = lastName;
+            Image = image;
+            SendToGet = sendToGet;
+            Grid = grid;
+            Keys = keys;
+            Words = words;
+            Clues = clues;
+            Legend = legend;
+        }
 
         public int PostSharedCross(SharedCross sharedCross)
         {

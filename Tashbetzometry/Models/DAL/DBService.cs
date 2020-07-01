@@ -887,5 +887,48 @@ WHERE SC.SendTo = '" + mail + "';";
 		}
 
 
+		//הכנסת התראה חדשה לטבלת Notification
+		public int PostNotification(Notifications n)
+		{
+			SqlConnection con;
+			SqlCommand cmd;
+			try
+			{
+				con = Connect("DBConnectionString");
+			}
+			catch (Exception ex)
+			{
+				// write to log
+				throw ex;
+			}
+			try
+			{
+				String cStr = BuildPostNotificationCommand(n);
+				cmd = CreateCommand(cStr, con);
+				int numEffected = cmd.ExecuteNonQuery();
+				return numEffected;
+			}
+			catch (Exception ex)
+			{
+				return 0;
+				throw (ex);
+			}
+			finally
+			{
+				if (con != null)
+				{
+					con.Close();
+				}
+			}
+		}
+
+		private string BuildPostNotificationCommand(Notifications n)
+		{
+			string command;
+			StringBuilder sb = new StringBuilder();
+			string prefix = $"INSERT INTO Notifications VALUES ('{n.SendFrom}', '{n.SendTo}', '{n.Type}', {n.Date});";
+			command = prefix + sb.ToString();
+			return command;
+		}
 	}
 }

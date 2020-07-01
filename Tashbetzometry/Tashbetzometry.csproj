@@ -193,6 +193,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Controllers\AddWordController.cs" />
     <Compile Include="Controllers\HintsController.cs" />
+    <Compile Include="Controllers\NotificationsController.cs" />
     <Compile Include="Controllers\SharedCrossController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\LevelController.cs" />
@@ -204,6 +205,7 @@
     <Compile Include="Models\AddWord.cs" />
     <Compile Include="Models\DAL\DBService.cs" />
     <Compile Include="Models\Hints.cs" />
+    <Compile Include="Models\Notifications.cs" />
     <Compile Include="Models\SharedCross.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Level.cs" />

@@ -639,7 +639,7 @@ namespace Tashbetzometry.Models.DAL
 		}
 
 
-		//הבאת השתבץ ששותף עבור המשתמש
+		//הבאת השתבצים ששותפו עבור המשתמש
 		public List<SharedCross> GetSharedCross(string mail)
         {
 			List<SharedCross> shareds = new List<SharedCross>();
@@ -944,6 +944,52 @@ WHERE SC.SendTo = '" + mail + "';";
 		private string Notification(string sf, string st, string t, DateTime d)
 		{
 			return $"INSERT INTO Notifications VALUES ('{sf}', '{st}', '{t}', '{d}'); ";
+		}
+
+
+		//הבאת כלל ההתראות למשתמש
+		public List<Notifications> GetNotifications(string mail)
+		{
+			List<Notifications> notifications = new List<Notifications>();
+			SqlConnection con = null;
+			try
+			{
+				con = Connect("DBConnectionString");
+				String selectSTR = @"SELECT TOP 10 N.SerialNum, N.SendFrom, U.UserName, U.FirstName, U.LastName, U.Image, N.SendTo, N.Type,	N.Date
+FROM [User] as U
+INNER JOIN Notifications as N
+ON U.Mail = N.SendFrom
+WHERE N.SendTo = '" + mail + "'ORDER BY N.Date";
+				SqlCommand cmd = new SqlCommand(selectSTR, con);
+				SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+				while (dr.Read())
+				{
+					Notifications n = new Notifications();
+					n.SerialNum = (int)(dr["SerialNum"]);
+					n.SendFrom = Convert.ToString(dr["SendFrom"]);
+					n.UserName = Convert.ToString(dr["UserName"]);
+					n.FirstName = Convert.ToString(dr["FirstName"]);
+					n.LastName = Convert.ToString(dr["LastName"]);
+					n.Image = Convert.ToString(dr["Image"]);
+					n.SendToGet = Convert.ToString(dr["SendTo"]);
+					n.Type = Convert.ToString(dr["Type"]);
+					n.Date = (DateTime)(dr["Date"]);
+					notifications.Add(n);
+				}
+				return notifications;
+			}
+			catch (Exception ex)
+			{
+				throw (ex);
+			}
+			finally
+			{
+				if (con != null)
+				{
+					con.Close();
+				}
+			}
 		}
 	}
 }

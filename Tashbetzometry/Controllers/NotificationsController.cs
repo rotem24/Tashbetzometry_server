@@ -17,9 +17,12 @@ namespace Tashbetzometry.Controllers
         }
 
         // GET api/<controller>/5
-        public string Get(int id)
+        [HttpGet]
+        [Route("api/Notifications/{mail}/")]
+        public List<Notifications> Get(string mail)
         {
-            return "value";
+            Notifications n = new Notifications();
+            return n.GetNotifications(mail);
         }
 
         // POST api/<controller>

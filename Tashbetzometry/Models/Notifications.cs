@@ -10,7 +10,7 @@ namespace Tashbetzometry.Models
     {
         int serialNum;
         string sendFrom;
-        string sendTo;
+        string[] sendTo;
         string type;
         DateTime date;
 
@@ -19,7 +19,7 @@ namespace Tashbetzometry.Models
 
         }
 
-        public Notifications(string sendFrom, string sendTo, string type, DateTime date)
+        public Notifications(string sendFrom, string[] sendTo, string type, DateTime date)
         {
             SendFrom = sendFrom;
             SendTo = sendTo;
@@ -27,7 +27,7 @@ namespace Tashbetzometry.Models
             Date = date;
         }
 
-        public Notifications(int serialNum, string sendFrom, string sendTo, string type, DateTime date)
+        public Notifications(int serialNum, string sendFrom, string[] sendTo, string type, DateTime date)
         {
             SerialNum = serialNum;
             SendFrom = sendFrom;
@@ -38,7 +38,7 @@ namespace Tashbetzometry.Models
 
         public int SerialNum { get => serialNum; set => serialNum = value; }
         public string SendFrom { get => sendFrom; set => sendFrom = value; }
-        public string SendTo { get => sendTo; set => sendTo = value; }
+        public string[] SendTo { get => sendTo; set => sendTo = value; }
         public string Type { get => type; set => type = value; }
         public DateTime Date { get => date; set => date = value; }
 

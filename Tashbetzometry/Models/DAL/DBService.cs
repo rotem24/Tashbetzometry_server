@@ -921,14 +921,29 @@ WHERE SC.SendTo = '" + mail + "';";
 				}
 			}
 		}
-
 		private string BuildPostNotificationCommand(Notifications n)
 		{
-			string command;
-			StringBuilder sb = new StringBuilder();
-			string prefix = $"INSERT INTO Notifications VALUES ('{n.SendFrom}', '{n.SendTo}', '{n.Type}', {n.Date});";
-			command = prefix + sb.ToString();
-			return command;
+			if (n.SendTo.Length <= 1)
+			{
+				string command;
+				StringBuilder sb = new StringBuilder();
+				string prefix = $"INSERT INTO Notifications VALUES ('{n.SendFrom}', '{n.SendTo[0]}', '{n.Type}', '{n.Date}');";
+				command = prefix + sb.ToString();
+				return command;
+			}
+			else
+			{
+				string str = "";
+				for (int i = 0; i < n.SendTo.Length; i++)
+				{
+					str += Notification(n.SendFrom, n.SendTo[i], n.Type, n.Date);
+				}
+				return str;
+			}
+		}
+		private string Notification(string sf, string st, string t, DateTime d)
+		{
+			return $"INSERT INTO Notifications VALUES ('{sf}', '{st}', '{t}', '{d}'); ";
 		}
 	}
 }

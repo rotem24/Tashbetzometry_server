@@ -105,5 +105,14 @@ namespace Tashbetzometry.Models
 			return db.UpdateThemeDB(user);
 		}
 
-	}
+        //מספר התשבצים ששיתף משתמש עם משתמש אחר
+        public int GetSharedWithForUFromDB(string mail)
+        {
+            DBService db = new DBService();
+            return db.GetSharedWithForUFromDB(mail);
+        }
+
+        
+
+    }
 }

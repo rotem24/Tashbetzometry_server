@@ -29,6 +29,7 @@
             //GetAddWordsFromDB();
             //UpdateLikeToWord();
             //updatAddWord();
+            GetUserAllSharedWithCrossFromDB();
         });
 
 
@@ -438,6 +439,19 @@
         }
 
 
+
+        //הבאת מספר התשחצים ששיתף משתמש (אזור אישי)
+        function GetUserAllSharedWithCrossFromDB() {
+            ajaxCall("Get", "../api/User/nitzan@gmail.com/shared", "", GetUserAllSharedCrossFromDBlSuccessCB,GetUserAllSharedCrossFromDBErrorCB);
+        }
+        function GetUserAllSharedCrossFromDBlSuccessCB(dataUserSharedCross) {
+            console.log("UserSheredCross:", dataUserSharedCross);
+
+        }
+        function GetUserAllSharedCrossFromDBErrorCB(err) {
+            console.log("Error UserSheredCross:", err);
+        }
+        
 
     </script>
 </head>

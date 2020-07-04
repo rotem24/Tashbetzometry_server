@@ -419,6 +419,26 @@
         }
 
 
+        //הוספת הגדרות שקיבלו 10 לייקים לטבלת words
+        function UpdateNewWords() {
+
+            var newWord = {
+                Key: "בגד-כסות",
+                Word: "בגד",
+                Clue: "כסות"
+            }
+
+            ajaxCall("PUT", "../api/Words/addNewWord", JSON.stringify(newWord), UpdateWordsSuccess, UpdateWordsError)
+        }
+        function UpdateWordsSuccess(data) {
+            console.log("UpdateAllWords Succsses!", data);
+        }
+        function UpdateWordsError(err) {
+            console.log("Error UpdateAllWords:", err);
+        }
+
+
+
     </script>
 </head>
 <body>

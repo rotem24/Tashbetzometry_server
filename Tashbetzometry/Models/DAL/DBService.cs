@@ -938,5 +938,49 @@ WHERE N.SendTo = '" + mail + "'ORDER BY N.Date";
 				}
 			}
 		}
-	}
+
+        //עדכון מילים בעלות עשר לייקים בטבלת words
+        public int UpdateNewWordsToDB(Words w)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                string cStr = BuildUpdateNewWordsCommand(w);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildUpdateNewWordsCommand(Words w)
+        {
+            string command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $"if NOT EXISTS(select * from [Words] where [Key] = '{w.Key}' and Word = '{w.Word}' and Solution = '{w.Clue}') begin insert into [Words] ([Key], Word, Solution) values('{w.Key}', '{w.Word}', '{w.Clue}') end";
+            command = prefix + sb.ToString();
+            return command;
+        }
+
+    }
 }

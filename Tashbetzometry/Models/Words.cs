@@ -145,5 +145,12 @@ namespace Tashbetzometry.Models
 			return db.PutWordsCountToDB(w);
 		}
 
-	}
+        //עדכון מילים עם עשר לייקים לטבלת words
+        public int UpdateNewWords(Words w)
+        {
+            DBService db = new DBService();
+            return db.UpdateNewWordsToDB(w);
+        }
+
+    }
 }

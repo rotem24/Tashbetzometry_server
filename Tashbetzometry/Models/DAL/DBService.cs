@@ -619,8 +619,11 @@ namespace Tashbetzometry.Models.DAL
             {
                 string command;
                 StringBuilder sb = new StringBuilder();
-                string prefix = $"INSERT INTO SharedCross VALUES ('{sc.SendFrom}', '{sc.SendTo}', '{sc.Grid}', '{sc.Keys}', '{sc.Words}', '{sc.Clues}', '{sc.Legend}');";
-                command = prefix + sb.ToString();
+                string prefix = $"Declare @crossNum int;" +
+								$"INSERT INTO SharedCross VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Grid}', '{sc.Keys}', '{sc.Words}', '{sc.Clues}', '{sc.Legend}');" +
+								$"select @crossNum = SCOPE_IDENTITY()" +
+								$"INSERT INTO Notifications VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Notification.Type}', @crossNum, '{sc.Notification.Date}');";
+				command = prefix + sb.ToString();
                 return command;
             }
             else
@@ -628,21 +631,23 @@ namespace Tashbetzometry.Models.DAL
 				string str = "";
 				for (int i = 0; i < sc.SendTo.Length; i++)
 				{
-					str += SharedCross(sc.SendFrom, sc.SendTo[i], sc.Grid, sc.Keys, sc.Words, sc.Clues, sc.Legend);
+					str += SharedCross(sc.SendFrom, sc.SendTo[i], sc.Grid, sc.Keys, sc.Words, sc.Clues, sc.Legend, sc.Notification.Type, sc.Notification.Date);
 				}
 				return str;
 			}
         }
-		private string SharedCross (string sf, string st, string g, string k, string w, string c, string l)
+		private string SharedCross (string sf, string st, string g, string k, string w, string c, string l, string t, DateTime d)
         {
-			return $"INSERT INTO SharedCross VALUES ('{sf}', '{st}', '{g}', '{k}', '{w}', '{c}', '{l}');";
+			return $"Declare @crossNum int;" +
+								$"INSERT INTO SharedCross VALUES ('{sf}', '{st}', '{g}', '{k}', '{w}', '{c}', '{l}');" +
+								$"select @crossNum = SCOPE_IDENTITY()" +
+								$"INSERT INTO Notifications VALUES ('{sf}', '{st}', '{t}', @crossNum, '{d}');";
 		}
 
 
 		//הבאת השתבצים ששותפו עבור המשתמש
-		public List<SharedCross> GetSharedCross(string mail)
+		public SharedCross GetSharedCross(int crossNum)
         {
-			List<SharedCross> shareds = new List<SharedCross>();
 			SqlConnection con = null;
             try
             {
@@ -651,13 +656,12 @@ namespace Tashbetzometry.Models.DAL
 FROM [User] as U
 INNER JOIN SharedCross as SC
 ON U.Mail = SC.SendFrom
-WHERE SC.SendTo = '" + mail + "';";
+WHERE SC.CrossNum = '" + crossNum + "';";
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-       
-                while (dr.Read())
+				SharedCross sc = new SharedCross();
+				while (dr.Read())
                 {
-					SharedCross sc = new SharedCross();
 					sc.CrossNum = (int)(dr["CrossNum"]);
                     sc.SendFrom = Convert.ToString(dr["SendFrom"]);
 					sc.UserName = Convert.ToString(dr["UserName"]);
@@ -670,9 +674,8 @@ WHERE SC.SendTo = '" + mail + "';";
                     sc.Words = Convert.ToString(dr["Words"]);
                     sc.Clues = Convert.ToString(dr["Clues"]);
                     sc.Legend = Convert.ToString(dr["Legend"]);
-					shareds.Add(sc);
                 }
-                return shareds;
+                return sc;
             }
             catch (Exception ex)
             {
@@ -686,6 +689,7 @@ WHERE SC.SendTo = '" + mail + "';";
                 }
             }
         }
+
 
         //הכנסת הגדרה חדשה שהוכנסה על ידי משתמש
         public int PostAddWord(AddWord ad)
@@ -721,7 +725,6 @@ WHERE SC.SendTo = '" + mail + "';";
                 }
             }
         }
-
         private string BuildAddWordCommand(AddWord ad)
         {
             string command;
@@ -730,6 +733,7 @@ WHERE SC.SendTo = '" + mail + "';";
             command = prefix + sb.ToString();
             return command;
         }
+
 
         //הבאת המילים החדשות שנוספו על ידי המשתמשים
         public List<AddWord> GetAddWordFromDB()
@@ -762,6 +766,7 @@ WHERE SC.SendTo = '" + mail + "';";
                 }
             }
         }
+
 
         //עדכון לייקים על הגדרה חדשה שנוספה על ידי משתמש
         public int UpdateLikeDB(AddWord ad)
@@ -805,6 +810,7 @@ WHERE SC.SendTo = '" + mail + "';";
             command = prefix + sb.ToString();
             return command;
         }
+
 
         //מחיקת הגדרות שהוצעו להוספה וקיבלו מעל 10 לייקים
         public int UpdateTenDB()
@@ -887,67 +893,7 @@ WHERE SC.SendTo = '" + mail + "';";
 		}
 
 
-		//הכנסת התראה חדשה לטבלת Notification
-		public int PostNotification(Notifications n)
-		{
-			SqlConnection con;
-			SqlCommand cmd;
-			try
-			{
-				con = Connect("DBConnectionString");
-			}
-			catch (Exception ex)
-			{
-				// write to log
-				throw ex;
-			}
-			try
-			{
-				String cStr = BuildPostNotificationCommand(n);
-				cmd = CreateCommand(cStr, con);
-				int numEffected = cmd.ExecuteNonQuery();
-				return numEffected;
-			}
-			catch (Exception ex)
-			{
-				return 0;
-				throw (ex);
-			}
-			finally
-			{
-				if (con != null)
-				{
-					con.Close();
-				}
-			}
-		}
-		private string BuildPostNotificationCommand(Notifications n)
-		{
-			if (n.SendTo.Length <= 1)
-			{
-				string command;
-				StringBuilder sb = new StringBuilder();
-				string prefix = $"INSERT INTO Notifications VALUES ('{n.SendFrom}', '{n.SendTo[0]}', '{n.Type}', '{n.Date}');";
-				command = prefix + sb.ToString();
-				return command;
-			}
-			else
-			{
-				string str = "";
-				for (int i = 0; i < n.SendTo.Length; i++)
-				{
-					str += Notification(n.SendFrom, n.SendTo[i], n.Type, n.Date);
-				}
-				return str;
-			}
-		}
-		private string Notification(string sf, string st, string t, DateTime d)
-		{
-			return $"INSERT INTO Notifications VALUES ('{sf}', '{st}', '{t}', '{d}'); ";
-		}
-
-
-		//הבאת כלל ההתראות למשתמש
+		//הבאת כל ההתראות מטבלת Notifications
 		public List<Notifications> GetNotifications(string mail)
 		{
 			List<Notifications> notifications = new List<Notifications>();
@@ -955,7 +901,7 @@ WHERE SC.SendTo = '" + mail + "';";
 			try
 			{
 				con = Connect("DBConnectionString");
-				String selectSTR = @"SELECT TOP 10 N.SerialNum, N.SendFrom, U.UserName, U.FirstName, U.LastName, U.Image, N.SendTo, N.Type,	N.Date
+				String selectSTR = @"SELECT TOP 10 N.SerialNum, N.SendFrom, U.UserName, U.FirstName, U.LastName, U.Image, N.SendTo, N.Type, N.CrossNum,	N.Date
 FROM [User] as U
 INNER JOIN Notifications as N
 ON U.Mail = N.SendFrom
@@ -974,6 +920,7 @@ WHERE N.SendTo = '" + mail + "'ORDER BY N.Date";
 					n.Image = Convert.ToString(dr["Image"]);
 					n.SendToGet = Convert.ToString(dr["SendTo"]);
 					n.Type = Convert.ToString(dr["Type"]);
+					n.CrossNum = (int)(dr["CrossNum"]);
 					n.Date = (DateTime)(dr["Date"]);
 					notifications.Add(n);
 				}

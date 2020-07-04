@@ -17,6 +17,7 @@ namespace Tashbetzometry.Models
         string sendToGet;
         string[] sendTo;
         string type;
+        int crossNum;
         DateTime date;
 
         public Notifications()
@@ -32,7 +33,7 @@ namespace Tashbetzometry.Models
             Date = date;
         }
 
-        public Notifications(int serialNum, string sendFrom, string userName, string firstName, string lastName, string image, string sendToGet, string[] sendTo, string type, DateTime date)
+        public Notifications(int serialNum, string sendFrom, string userName, string firstName, string lastName, string image, string sendToGet, string type, int crossNum, DateTime date)
         {
             SerialNum = serialNum;
             SendFrom = sendFrom;
@@ -43,6 +44,7 @@ namespace Tashbetzometry.Models
             SendToGet = sendToGet;
             SendTo = sendTo;
             Type = type;
+            CrossNum = crossNum;
             Date = date;
         }
 
@@ -55,15 +57,8 @@ namespace Tashbetzometry.Models
         public string SendToGet { get => sendToGet; set => sendToGet = value; }
         public string[] SendTo { get => sendTo; set => sendTo = value; }
         public string Type { get => type; set => type = value; }
+        public int CrossNum { get => crossNum; set => crossNum = value; }
         public DateTime Date { get => date; set => date = value; }
-
-
-        public int PostNotification(Notifications n)
-        {
-            DBService db = new DBService();
-            int numAffected = db.PostNotification(n);
-            return numAffected;
-        }
 
         public List<Notifications> GetNotifications(string mail)
         {

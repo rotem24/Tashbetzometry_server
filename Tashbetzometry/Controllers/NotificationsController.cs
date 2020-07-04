@@ -28,8 +28,7 @@ namespace Tashbetzometry.Controllers
         // POST api/<controller>
         public void Post([FromBody] Notifications n)
         {
-            Notifications nt = new Notifications();
-            nt.PostNotification(n);
+
         }
 
         // PUT api/<controller>/5

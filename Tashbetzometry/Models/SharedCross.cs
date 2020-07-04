@@ -21,6 +21,8 @@ namespace Tashbetzometry.Models
         string words;
         string clues;
         string legend;
+        Notifications notification;
+
 
         public int CrossNum { get => crossNum; set => crossNum = value; }
         public string SendFrom { get => sendFrom; set => sendFrom = value; }
@@ -35,6 +37,7 @@ namespace Tashbetzometry.Models
         public string Words { get => words; set => words = value; }
         public string Clues { get => clues; set => clues = value; }
         public string Legend { get => legend; set => legend = value; }
+        public Notifications Notification { get => notification; set => notification = value; }
 
         public SharedCross()
         {
@@ -42,7 +45,7 @@ namespace Tashbetzometry.Models
 
 
 
-        public SharedCross(int crossNum, string sendFrom, string sendToGet, string grid, string keys, string words, string clues, string legend)
+        public SharedCross(int crossNum, string sendFrom, string sendToGet, string grid, string keys, string words, string clues, string legend, Notifications notification)
         {
             CrossNum = crossNum;
             SendFrom = sendFrom;
@@ -52,6 +55,7 @@ namespace Tashbetzometry.Models
             Words = words;
             Clues = clues;
             Legend = legend;
+            Notification = notification;
         }
 
         public SharedCross(string sendFrom, string[] sendTo, string grid, string keys, string words, string clues, string legend)
@@ -63,7 +67,6 @@ namespace Tashbetzometry.Models
             Words = words;
             Clues = clues;
             Legend = legend;
-
         }
 
         public SharedCross(int crossNum, string sendFrom, string userName, string firstName, string lastName, string image, string sendToGet, string grid, string keys, string words, string clues, string legend)
@@ -89,10 +92,10 @@ namespace Tashbetzometry.Models
             return numAffected;
         }
 
-        public List<SharedCross> GetSharedCross(string mail)
+        public SharedCross GetSharedCross(int crossNum)
         {
             DBService db = new DBService();
-            return db.GetSharedCross(mail);
+            return db.GetSharedCross(crossNum);
         }
     }
 }

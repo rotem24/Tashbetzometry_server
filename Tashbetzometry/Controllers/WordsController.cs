@@ -39,7 +39,7 @@ namespace Tashbetzometry.Controllers
 
         [HttpPut]
         [Route("api/Words/addNewWord")]
-        public void PutNewWord([FromBody] Words newWord)
+        public void  PutNewWord([FromBody] Words newWord)
         {
             Words words = new Words();
             words.UpdateNewWords(newWord);

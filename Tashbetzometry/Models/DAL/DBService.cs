@@ -984,33 +984,33 @@ WHERE N.SendTo = '" + mail + "'ORDER BY N.Date";
 
 
         // הבאת מספר התשבצים ששיתף משתמש מסוים
-        public int GetSharedWithForUFromDB(string mail)
-        {
-            List<words> USharesW = new List<words>();
-            SqlConnection con = null;
-            try
-            {
-                con = Connect("DBConnectionString");
-                String selectSTR = $@"  select count(SendFrom) 
-  from [bgroup11_prod].[dbo].[SharedCross]
-where SendFrom='{mail}'  ";
-                SqlCommand cmd = new SqlCommand(selectSTR, con);
-                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+//        public int GetSharedWithForUFromDB(string mail)
+//        {
+//            List<words> USharesW = new List<words>();
+//            SqlConnection con = null;
+//            try
+//            {
+//                con = Connect("DBConnectionString");
+//                String selectSTR = $@"  select count(SendFrom) 
+//  from [bgroup11_prod].[dbo].[SharedCross]
+//where SendFrom='{mail}'  ";
+//                SqlCommand cmd = new SqlCommand(selectSTR, con);
+//                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
 
-            }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-            finally
-            {
-                if (con != null)
-                {
-                    con.Close();
-                }
-            }
-        }
+//            }
+//            catch (Exception ex)
+//            {
+//                throw (ex);
+//            }
+//            finally
+//            {
+//                if (con != null)
+//                {
+//                    con.Close();
+//                }
+//            }
+//        }
 
 
 

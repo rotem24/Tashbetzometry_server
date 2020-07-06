@@ -46,8 +46,18 @@ namespace Tashbetzometry.Controllers
 			return u.GetUserFromDB(mail, password);
 		}
 
-		// POST api/<controller>
-		public void Post([FromBody]User user)
+        //סרינה יש פונקציה מוכנה של הבאת כל התשבצים ששותפו - לדבר עם ניצן
+        //// GET api/User/sharedcross/mail
+        //[HttpGet]
+        //[Route("api/User/{mail}/shared")]
+        //public int Get(string mail)
+        //{
+        //    User u = new User();
+        //    return u.GetSharedWithForUFromDB(mail);
+        //}
+
+        // POST api/<controller>
+        public void Post([FromBody]User user)
 		{
 			User u = new User();
 			u.InsertUserToServer(user);

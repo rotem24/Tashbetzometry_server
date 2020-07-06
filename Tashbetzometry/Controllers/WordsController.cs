@@ -37,8 +37,16 @@ namespace Tashbetzometry.Controllers
 			countW.PutWordsCountToDB(w);
 		}
 
-		// DELETE api/<controller>/5
-		public void Delete(int id)
+        [HttpPut]
+        [Route("api/Words/addNewWord")]
+        public void  PutNewWord([FromBody] Words newWord)
+        {
+            Words words = new Words();
+            words.UpdateNewWords(newWord);
+        }
+
+        // DELETE api/<controller>/5
+        public void Delete(int id)
 		{
 		}
 	}

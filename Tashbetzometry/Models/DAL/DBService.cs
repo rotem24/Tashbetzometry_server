@@ -620,9 +620,9 @@ namespace Tashbetzometry.Models.DAL
                 string command;
                 StringBuilder sb = new StringBuilder();
                 string prefix = $"Declare @crossNum int;" +
-								$"INSERT INTO SharedCross VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Grid}', '{sc.Keys}', '{sc.Words}', '{sc.Clues}', '{sc.Legend}');" +
-								$"select @crossNum = SCOPE_IDENTITY()" +
-								$"INSERT INTO Notifications VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Notification.Type}', @crossNum, '{sc.Notification.Date}');";
+								$" INSERT INTO SharedCross VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Grid}', '{sc.Keys}', '{sc.Words}', '{sc.Clues}', '{sc.Legend}');" +
+								$" select @crossNum = SCOPE_IDENTITY()" +
+								$" INSERT INTO Notifications VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Notification.Type}', @crossNum, '{sc.Notification.Date}', {0}, {0});";
 				command = prefix + sb.ToString();
                 return command;
             }
@@ -641,7 +641,7 @@ namespace Tashbetzometry.Models.DAL
 			return $"Declare @crossNum int;" +
 								$"INSERT INTO SharedCross VALUES ('{sf}', '{st}', '{g}', '{k}', '{w}', '{c}', '{l}');" +
 								$"select @crossNum = SCOPE_IDENTITY()" +
-								$"INSERT INTO Notifications VALUES ('{sf}', '{st}', '{t}', @crossNum, '{d}');";
+								$"INSERT INTO Notifications VALUES ('{sf}', '{st}', '{t}', @crossNum, '{d}', {0}, {0});";
 		}
 
 
@@ -901,11 +901,11 @@ WHERE SC.CrossNum = '" + crossNum + "';";
 			try
 			{
 				con = Connect("DBConnectionString");
-				String selectSTR = @"SELECT TOP 10 N.SerialNum, N.SendFrom, U.UserName, U.FirstName, U.LastName, U.Image, N.SendTo, N.Type, N.CrossNum,	N.Date
+				String selectSTR = @"SELECT TOP 10 N.SerialNum, N.SendFrom, U.UserName, U.FirstName, U.LastName, U.Image, N.SendTo, N.Type, N.CrossNum,	N.Date, N.IsRead, N.HasDone
 FROM [User] as U
 INNER JOIN Notifications as N
 ON U.Mail = N.SendFrom
-WHERE N.SendTo = '" + mail + "'ORDER BY N.Date";
+WHERE N.SendTo = '" + mail + "' ORDER BY N.Date DESC";
 				SqlCommand cmd = new SqlCommand(selectSTR, con);
 				SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
@@ -922,6 +922,8 @@ WHERE N.SendTo = '" + mail + "'ORDER BY N.Date";
 					n.Type = Convert.ToString(dr["Type"]);
 					n.CrossNum = (int)(dr["CrossNum"]);
 					n.Date = (DateTime)(dr["Date"]);
+					n.IsRead = (bool)(dr["IsRead"]);
+					n.HasDone = (bool)(dr["HasDone"]);
 					notifications.Add(n);
 				}
 				return notifications;
@@ -937,6 +939,138 @@ WHERE N.SendTo = '" + mail + "'ORDER BY N.Date";
 					con.Close();
 				}
 			}
+		}
+
+
+		//עדכון טבלת התראות אם המשתמש קרא את ההתראה
+		public int UpdateIsReadNotification(string mail)
+		{
+			SqlConnection con;
+			SqlCommand cmd;
+			try
+			{
+				con = Connect("DBConnectionString");
+			}
+			catch (Exception ex)
+			{
+				// write to log
+				throw ex;
+			}
+			try
+			{
+				string cStr = BuildUpdateIsReadCommand(mail);
+				cmd = CreateCommand(cStr, con);
+				int numEffected = cmd.ExecuteNonQuery();
+				return numEffected;
+			}
+			catch (Exception ex)
+			{
+				return 0;
+				throw (ex);
+			}
+			finally
+			{
+				if (con != null)
+				{
+					con.Close();
+				}
+			}
+		}
+		private string BuildUpdateIsReadCommand(string mail)
+		{
+			string command;
+			StringBuilder sb = new StringBuilder();
+			string prefix = $"UPDATE Notifications SET IsRead = 1 WHERE IsRead = 0 AND SendTo = '{mail}';";
+			command = prefix + sb.ToString();
+			return command;
+		}
+
+
+		//עדכון טבלת התראות אם המשתמש טיפל בהתראה
+		public int UpdateHasDoneNotification(int crossNum)
+		{
+			SqlConnection con;
+			SqlCommand cmd;
+			try
+			{
+				con = Connect("DBConnectionString");
+			}
+			catch (Exception ex)
+			{
+				// write to log
+				throw ex;
+			}
+			try
+			{
+				string cStr = BuildUpdateHasDoneCommand(crossNum);
+				cmd = CreateCommand(cStr, con);
+				int numEffected = cmd.ExecuteNonQuery();
+				return numEffected;
+			}
+			catch (Exception ex)
+			{
+				return 0;
+				throw (ex);
+			}
+			finally
+			{
+				if (con != null)
+				{
+					con.Close();
+				}
+			}
+		}
+		private string BuildUpdateHasDoneCommand(int crossNum)
+		{
+			string command;
+			StringBuilder sb = new StringBuilder();
+			string prefix = $"UPDATE Notifications SET HasDone = 1 WHERE HasDone = 0 AND CrossNum = {crossNum};";
+			command = prefix + sb.ToString();
+			return command;
+		}
+
+
+		//מחיקת התראה מטבלת Notifications
+		public int DeleteNotification(int crossNum)
+		{
+			SqlConnection con;
+			SqlCommand cmd;
+			try
+			{
+				con = Connect("DBConnectionString");
+			}
+			catch (Exception ex)
+			{
+				// write to log
+				throw ex;
+			}
+			try
+			{
+				string cStr = BuildDeleteNotificationCommand(crossNum);
+				cmd = CreateCommand(cStr, con);
+				int numEffected = cmd.ExecuteNonQuery();
+				return numEffected;
+			}
+			catch (Exception ex)
+			{
+				return 0;
+				throw (ex);
+			}
+			finally
+			{
+				if (con != null)
+				{
+					con.Close();
+				}
+			}
+		}
+		private string BuildDeleteNotificationCommand(int crossNum)
+		{
+			string command;
+			StringBuilder sb = new StringBuilder();
+			string prefix = $"DELETE FROM Notifications WHERE CrossNum = {crossNum};";
+			command = prefix + sb.ToString();
+			return command;
 		}
 	}
 }

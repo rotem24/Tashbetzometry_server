@@ -326,7 +326,7 @@ namespace Tashbetzometry.Models.DAL
 			try
 			{
 				con = Connect("DBConnectionString");
-				String selectSTR = "SELECT [Words].[Key], [Words].Word, [Words].Solution,  [Words].[Count] as NumOfShows, COUNT([Hints].[WordKey]) AS NumOfHints FROM [Hints] inner join [Words] on [Hints].[WordKey] = [Words].[Key] group by [Words].[Key], [Words].Word, [Words].Solution, [Words].[Count];";
+				String selectSTR = "SELECT [Words].[Key], [Words].Word, [Words].Solution,[Words].WordWithSpace ,  [Words].[Count] as NumOfShows, COUNT([Hints].[WordKey]) AS NumOfHints FROM [Hints] inner join [Words] on [Hints].[WordKey] = [Words].[Key] group by [Words].[Key], [Words].Word, [Words].Solution, [Words].WordWithSpace, [Words].[Count]";
 				SqlCommand cmd = new SqlCommand(selectSTR, con);
 				SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 

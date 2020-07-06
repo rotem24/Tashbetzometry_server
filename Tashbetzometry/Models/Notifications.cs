@@ -19,6 +19,8 @@ namespace Tashbetzometry.Models
         string type;
         int crossNum;
         DateTime date;
+        bool isRead;
+        bool hasDone;
 
         public Notifications()
         {
@@ -33,7 +35,7 @@ namespace Tashbetzometry.Models
             Date = date;
         }
 
-        public Notifications(int serialNum, string sendFrom, string userName, string firstName, string lastName, string image, string sendToGet, string type, int crossNum, DateTime date)
+        public Notifications(int serialNum, string sendFrom, string userName, string firstName, string lastName, string image, string sendToGet, string type, int crossNum, DateTime date, bool isRead, bool hasDone)
         {
             SerialNum = serialNum;
             SendFrom = sendFrom;
@@ -46,6 +48,8 @@ namespace Tashbetzometry.Models
             Type = type;
             CrossNum = crossNum;
             Date = date;
+            IsRead = isRead;
+            HasDone = hasDone;
         }
 
         public int SerialNum { get => serialNum; set => serialNum = value; }
@@ -59,11 +63,31 @@ namespace Tashbetzometry.Models
         public string Type { get => type; set => type = value; }
         public int CrossNum { get => crossNum; set => crossNum = value; }
         public DateTime Date { get => date; set => date = value; }
+        public bool IsRead { get => isRead; set => isRead = value; }
+        public bool HasDone { get => hasDone; set => hasDone = value; }
 
         public List<Notifications> GetNotifications(string mail)
         {
             DBService db = new DBService();
             return db.GetNotifications(mail);
+        }
+
+        public int UpdateIsReadNotification(string mail)
+        {
+            DBService db = new DBService();
+            return db.UpdateIsReadNotification(mail);
+        }
+
+        public int UpdateHasDoneNotification(int crossNum)
+        {
+            DBService db = new DBService();
+            return db.UpdateHasDoneNotification(crossNum);
+        }
+
+        public int DeleteNotification(int crossNum)
+        {
+            DBService db = new DBService();
+            return db.DeleteNotification(crossNum);
         }
     }
 }

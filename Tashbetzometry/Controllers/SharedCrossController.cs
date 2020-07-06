@@ -26,6 +26,8 @@ namespace Tashbetzometry.Controllers
         }
 
         // POST api/<controller>
+        [HttpPost]
+        [Route("api/SharedCross/")]
         public void Post([FromBody] SharedCross sharedCross)
         {
             SharedCross sc = new SharedCross();

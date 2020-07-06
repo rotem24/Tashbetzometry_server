@@ -44,5 +44,12 @@ namespace Tashbetzometry.Models
             int numAffected = dbs.PostHintToDB(hints);
             return numAffected;
         }
+
+        ////מספר הרמזים שלקח משתמש מסוים
+        public int GetCountHintsFromDB(string mail)
+        {
+            DBService db = new DBService();
+            return db.GetCountHintsFromDB(mail);
+        }
     }
 }

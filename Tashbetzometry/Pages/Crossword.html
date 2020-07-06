@@ -29,7 +29,8 @@
             //GetAddWordsFromDB();
             //UpdateLikeToWord();
             //updatAddWord();
-            GetUserAllSharedWithCrossFromDB();
+            //GetUserAllSharedWithCrossFromDB();
+
         });
 
 
@@ -161,7 +162,7 @@
                 if (alredy) {
                     break;
                 }
-                else {               
+                else {
                     keys[pointer] = dataLevel[i].KeyWord;
                     clues[pointer] = dataLevel[i].Solution;
                     words[pointer] = dataLevel[i].Word;
@@ -388,7 +389,7 @@
             console.log("GetAddWordErrorCB Error:", err);
         }
 
-        //עדכון לייקים להגדרה חדשה 
+        //עדכון לייקים להגדרה חדשה
         function UpdateLikeToWord() {
 
             var addWord = {
@@ -440,7 +441,7 @@
 
         //הבאת מספר התשחצים ששיתף משתמש (אזור אישי)
         function GetUserAllSharedWithCrossFromDB() {
-            ajaxCall("Get", "../api/User/nitzan@gmail.com/shared", "", GetUserAllSharedCrossFromDBlSuccessCB,GetUserAllSharedCrossFromDBErrorCB);
+            ajaxCall("GET", "../api/SharedCross/nitzan@gmail.com/", "", GetUserAllSharedCrossFromDBlSuccessCB, GetUserAllSharedCrossFromDBErrorCB);
         }
         function GetUserAllSharedCrossFromDBlSuccessCB(dataUserSharedCross) {
             console.log("UserSheredCross:", dataUserSharedCross);
@@ -449,7 +450,7 @@
         function GetUserAllSharedCrossFromDBErrorCB(err) {
             console.log("Error UserSheredCross:", err);
         }
-        
+
 
     </script>
 </head>

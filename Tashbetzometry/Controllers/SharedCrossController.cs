@@ -16,13 +16,33 @@ namespace Tashbetzometry.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/SharedCross/{mail}/
+        // GET api/SharedCross/{crossnum}/
         [HttpGet]
         [Route("api/SharedCross/{crossNum}/")]
         public SharedCross Get(int crossNum)
         {
             SharedCross sc = new SharedCross();
             return sc.GetSharedCross(crossNum);
+        }
+
+        //הבאת מספר התשבצים שמשתמש מסוים שיתף -
+        // GET api/User/sharedcross/mail
+        [HttpGet]
+        [Route("api/SharedCross/{mail}/count")]
+        public int GetSharedWith(string mail)
+        {
+            SharedCross SC = new SharedCross();
+            return SC.GetSharedWithForUFromDB(mail);
+        }
+
+        //הבאת מספר התשבצים ששתיפו עם משתמש מסוים  -
+        // GET api/User/sharedcross/mail
+        [HttpGet]
+        [Route("api/SharedCross/{mail}/countfrom")]
+        public int GetCrossFrom(string mail)
+        {
+            SharedCross SC = new SharedCross();
+            return SC.GetSharedFromForUFromDB(mail);
         }
 
         // POST api/<controller>

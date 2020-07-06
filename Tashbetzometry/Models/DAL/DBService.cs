@@ -937,33 +937,127 @@ WHERE SC.CrossNum = '" + crossNum + "';";
 
 
         // הבאת מספר התשבצים ששיתף משתמש מסוים
-        //        public int GetSharedWithForUFromDB(string mail)
-        //        {
-        //            List<words> USharesW = new List<words>();
-        //            SqlConnection con = null;
-        //            try
-        //            {
-        //                con = Connect("DBConnectionString");
-        //                String selectSTR = $@"  select count(SendFrom) 
-        //  from [bgroup11_prod].[dbo].[SharedCross]
-        //where SendFrom='{mail}'  ";
-        //                SqlCommand cmd = new SqlCommand(selectSTR, con);
-        //                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+        public int GetSharedWithForUFromDB(string mail)
+        {
+            int num = 0;
+            SqlConnection con = null;
+            try
+            {
+                con = Connect("DBConnectionString");
+                String selectSTR = $@"  select count(SendFrom) as 'count'
+          from [bgroup11_prod].[dbo].[SharedCross]
+        where SendFrom='{mail}'  ";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
+                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (dr.Read())
+                {
+                    num=(int)(dr["count"]);
+
+                 
+                    return num;
+
+                }
+                return num;
+
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+              
+            }
+        }
+
+        // הבאת מספר התשבצים ששותפו עם משתמש מסוים
+        public int GetSharedFromForUFromDB(string mail)
+        {
+            int num = 0;
+            SqlConnection con = null;
+            try
+            {
+                con = Connect("DBConnectionString");
+                String selectSTR = $@"  select count(SendFrom) as 'count'
+          from [bgroup11_prod].[dbo].[SharedCross]
+        where SendTo='{mail}'  ";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
+                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (dr.Read())
+                {
+                    num = (int)(dr["count"]);
 
 
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                throw (ex);
-        //            }
-        //            finally
-        //            {
-        //                if (con != null)
-        //                {
-        //                    con.Close();
-        //                }
-        //            }
-        //        }
+                    return num;
+
+                }
+                return num;
+
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+
+            }
+        }
+
+        // הבאת מספר התשבצים ששותפו עם משתמש מסוים
+        public int GetCountHintsFromDB(string mail)
+        {
+            int num = 0;
+            SqlConnection con = null;
+            try
+            {
+                con = Connect("DBConnectionString");
+                String selectSTR = $@"  select count(UserMail) as 'count'
+          from [bgroup11_prod].[dbo].[Hints]
+        where UserMail='{mail}'  ";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
+                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (dr.Read())
+                {
+                    num = (int)(dr["count"]);
+
+
+                    return num;
+
+                }
+                return num;
+
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+
+            }
+        }
+
+
+
 
         //הבאת כל ההתראות מטבלת Notifications
         public List<Notifications> GetNotifications(string mail)

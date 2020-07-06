@@ -16,8 +16,18 @@ namespace Tashbetzometry.Controllers
 			return new string[] { "value1", "value2" };
 		}
 
-		// GET api/<controller>/5
-		public string Get(int id)
+        //הבאת מספר הרמזים שלקח משתמש מסוים -
+        // GET api/Hints/mail
+        [HttpGet]
+        [Route("api/Hints/{mail}/countHints")]
+        public int GetCountHints(string mail)
+        {
+            Hints CH = new Hints();
+            return CH.GetCountHintsFromDB(mail);
+        }
+
+        // GET api/<controller>/5
+        public string Get(int id)
 		{
 			return "value";
 		}

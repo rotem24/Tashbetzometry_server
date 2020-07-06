@@ -8,8 +8,8 @@ using Tashbetzometry.Models;
 
 namespace Tashbetzometry.Controllers
 {
-	public class UserController : ApiController
-	{
+    public class UserController : ApiController
+    {
         // GET api/<controller>
         [HttpGet]
         [Route("api/User/Users")]
@@ -21,55 +21,45 @@ namespace Tashbetzometry.Controllers
 
         // GET api/User/mail
         [HttpGet]
-		[Route("api/User/{mail}")]
-		public User Get(string mail)
-		{
-			User u = new User();
-			return u.GetForgetPassFromDB(mail);
-		}
+        [Route("api/User/{mail}")]
+        public User Get(string mail)
+        {
+            User u = new User();
+            return u.GetForgetPassFromDB(mail);
+        }
 
-		// GET api/User/mail
-		[HttpGet]
-		[Route("api/User/Login/{mail}")]
-		public User GetUser(string mail)
-		{
-			User u = new User();
-			return u.GetUserDataFromDB(mail);
-		}
+        // GET api/User/mail
+        [HttpGet]
+        [Route("api/User/Login/{mail}")]
+        public User GetUser(string mail)
+        {
+            User u = new User();
+            return u.GetUserDataFromDB(mail);
+        }
 
-		// GET api/User/mail/password
-		[HttpGet]
-		[Route("api/User/{mail}/{password}")]
-		public User Get(string mail, string password)
-		{
-			User u = new User();
-			return u.GetUserFromDB(mail, password);
-		}
-
-        //סרינה יש פונקציה מוכנה של הבאת כל התשבצים ששותפו - לדבר עם ניצן
-        //// GET api/User/sharedcross/mail
-        //[HttpGet]
-        //[Route("api/User/{mail}/shared")]
-        //public int Get(string mail)
-        //{
-        //    User u = new User();
-        //    return u.GetSharedWithForUFromDB(mail);
-        //}
+        // GET api/User/mail/password
+        [HttpGet]
+        [Route("api/User/{mail}/{password}")]
+        public User Get(string mail, string password)
+        {
+            User u = new User();
+            return u.GetUserFromDB(mail, password);
+        }
 
         // POST api/<controller>
         public void Post([FromBody]User user)
-		{
-			User u = new User();
-			u.InsertUserToServer(user);
-		}
+        {
+            User u = new User();
+            u.InsertUserToServer(user);
+        }
 
         [HttpPut]
         [Route("api/User/ForgetPass")]
         public void Put([FromBody]User user)
-		{
-			User u = new User();
-			u.UpdatePasswordDB(user);
-		}
+        {
+            User u = new User();
+            u.UpdatePasswordDB(user);
+        }
 
         [HttpPut]
         [Route("api/User/Score")]
@@ -79,17 +69,17 @@ namespace Tashbetzometry.Controllers
             u.UpdateScoreDB(user);
         }
 
-		[HttpPut]
-		[Route("api/User/Theme")]
-		public void PutTheme([FromBody] User user)
-		{
-			User u = new User();
-			u.UpdateThemeDB(user);
-		}
+        [HttpPut]
+        [Route("api/User/Theme")]
+        public void PutTheme([FromBody] User user)
+        {
+            User u = new User();
+            u.UpdateThemeDB(user);
+        }
 
-		// DELETE api/<controller>/5
-		public void Delete(int id)
-		{
-		}
-	}
+        // DELETE api/<controller>/5
+        public void Delete(int id)
+        {
+        }
+    }
 }

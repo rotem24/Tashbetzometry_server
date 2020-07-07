@@ -46,13 +46,13 @@ namespace Tashbetzometry.Models.DAL
 			try
 			{
 				con = Connect("DBConnectionString");
-				String selectSTR = "SELECT * FROM Words";
-				SqlCommand cmd = new SqlCommand(selectSTR, con);
+                String selectSTR = "select * from [dbo].[Words]";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
 				SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
 				while (dr.Read())
 				{
-					Words a = new Words(Convert.ToString(dr["Key"]), Convert.ToString(dr["Word"]), Convert.ToString(dr["Solution"]), (int)dr["Count"]);
+					Words a = new Words(Convert.ToString(dr["Key"]), Convert.ToString(dr["Word"]), Convert.ToString(dr["Solution"]), (int)dr["Count"], Convert.ToString(dr["WordWithSpace"]));
 					AP.Add(a);
 				}
 				return AP;

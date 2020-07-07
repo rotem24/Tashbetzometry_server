@@ -12,11 +12,12 @@ namespace Tashbetzometry.Models
 		string word;
 		string clue;
 		int count;
+        string wordWithSpace;
 		List<Words> newData = new List<Words>();
 		string[] keysArr;
 		string[] wordsArr;
 		string[] cluesArr;
-
+        
 
 		public Words()
 		{
@@ -29,9 +30,20 @@ namespace Tashbetzometry.Models
 			Word = word;
 			Clue = clue;
 			Count = count;
-		}
 
-		public Words(string[] keysArr, string[] wordsArr, string[] cluesArr)
+        }
+
+        public Words(string key, string word, string clue, int count, string wordWithSpace)
+        {
+            Key = key;
+            Word = word;
+            Clue = clue;
+            Count = count;
+            WordWithSpace = wordWithSpace;
+
+        }
+
+        public Words(string[] keysArr, string[] wordsArr, string[] cluesArr)
 		{
 			KeysArr = keysArr;
 			WordsArr = wordsArr;
@@ -52,10 +64,11 @@ namespace Tashbetzometry.Models
 		public string[] KeysArr { get => keysArr; set => keysArr = value; }
 		public string[] WordsArr { get => wordsArr; set => wordsArr = value; }
 		public string[] CluesArr { get => cluesArr; set => cluesArr = value; }
-		
+        public string WordWithSpace { get => wordWithSpace; set => wordWithSpace = value; }
 
-		//הגרלת 10 מילים מהדאטה
-		public List<Words> GetWordsFromDB()
+
+        //הגרלת 10 מילים מהדאטה
+        public List<Words> GetWordsFromDB()
 		{
 			//הבאת המילים מה-DB
 			DBService db = new DBService();

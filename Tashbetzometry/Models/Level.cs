@@ -11,29 +11,33 @@ namespace Tashbetzometry.Models
         string keyWord;
         string word;
         string solution;
+        string wordWithSpace;
         int numOfHints;
         int numOfShow;
         double rate;
-
+        
         public Level()
         {
 
         }
 
-        public Level(string keyWord, string word, string solution, int numOfHints, int numOfShow)
+        public Level(string keyWord, string word, string solution, string wordWithSpace, int numOfHints, int numOfShow)
         {
             KeyWord = keyWord;
             Word = word;
             Solution = solution;
+            WordWithSpace = wordWithSpace;
             NumOfHints = numOfHints;
             NumOfShow = numOfShow;
+          
         }
 
-        public Level(string keyWord, string word, string solution, int numOfHints, int numOfShow, double rate)
+        public Level(string keyWord, string word, string solution, string wordWithSpace, int numOfHints, int numOfShow, double rate)
         {
             KeyWord = keyWord;
             Word = word;
             Solution = solution;
+            WordWithSpace = wordWithSpace;
             NumOfHints = numOfHints;
             NumOfShow = numOfShow;
             Rate = rate;
@@ -42,9 +46,11 @@ namespace Tashbetzometry.Models
         public string KeyWord { get => keyWord; set => keyWord = value; }
         public string Word { get => word; set => word = value; }
         public string Solution { get => solution; set => solution = value; }
+        public string WordWithSpace { get => wordWithSpace; set => wordWithSpace = value; }
         public int NumOfHints { get => numOfHints; set => numOfHints = value; }
         public int NumOfShow { get => numOfShow; set => numOfShow = value; }
         public double Rate { get => rate; set => rate = value; }
+      
 
         //פונקציית מיון
         public int CompareTo(Level other)
@@ -80,7 +86,7 @@ namespace Tashbetzometry.Models
             for (int i = 0; i < dataLevel.Count; i++)
             {
                 rateForWord = (double)(dataLevel[i].NumOfHints) / (double)(dataLevel[i].NumOfShow);
-                Level l1 = new Level(dataLevel[i].KeyWord, dataLevel[i].Word, dataLevel[i].Solution, dataLevel[i].NumOfShow, dataLevel[i].NumOfHints, rateForWord);
+                Level l1 = new Level(dataLevel[i].KeyWord, dataLevel[i].Word, dataLevel[i].Solution, dataLevel[i].WordWithSpace, dataLevel[i].NumOfShow, dataLevel[i].NumOfHints, rateForWord);
                 tempDataLevel.Add(l1);
             }
             tempDataLevel.Sort();
@@ -148,7 +154,7 @@ namespace Tashbetzometry.Models
                     }
                 }
 
-                Level l2 = new Level(tempDataLevel[i].KeyWord, wordInData, tempDataLevel[i].Solution, tempDataLevel[i].NumOfShow, tempDataLevel[i].numOfHints, tempDataLevel[i].Rate);
+                Level l2 = new Level(tempDataLevel[i].KeyWord, wordInData, tempDataLevel[i].Solution, tempDataLevel[i].WordWithSpace, tempDataLevel[i].NumOfShow, tempDataLevel[i].numOfHints, tempDataLevel[i].Rate);
                 newDataLevel.Add(l2);
             }
             return newDataLevel;

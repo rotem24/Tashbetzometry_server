@@ -336,6 +336,7 @@ namespace Tashbetzometry.Models.DAL
 						Convert.ToString(dr["Key"]),
 						Convert.ToString(dr["Word"]),
 						Convert.ToString(dr["Solution"]),
+                        Convert.ToString(dr["WordWithSpace"]),
 						(int)(dr["NumOfHints"]),
 						(int)(dr["NumOfShows"]));
 					wl.Add(a);

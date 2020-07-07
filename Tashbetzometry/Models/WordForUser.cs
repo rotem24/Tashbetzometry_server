@@ -12,6 +12,7 @@ namespace Tashbetzometry.Models
 		string keyWord;
 		string word;
 		string solution;
+        string wordWithSpace;
 		int numOfShows;
 		int numOfHints;
 		double rate;
@@ -22,13 +23,14 @@ namespace Tashbetzometry.Models
 
 		}
 
-		public WordForUser(string userMail, string keyWord, string word, string solution, int numOfShows, int numOfHints, double rate)
+		public WordForUser(string userMail, string keyWord, string word, string solution, string wordWithSpace , int numOfShows, int numOfHints, double rate)
 		{
 			UserMail = userMail;
 			KeyWord = keyWord;
 			Word = word;
 			Solution = solution;
-			NumOfShows = numOfShows;
+            WordWithSpace = wordWithSpace;
+            NumOfShows = numOfShows;
 			NumOfHints = numOfHints;
 			Rate = rate;
 		}
@@ -51,9 +53,10 @@ namespace Tashbetzometry.Models
 		public int NumOfHints { get => numOfHints; set => numOfHints = value; }
 		public double Rate { get => rate; set => rate = value; }
 		public string[] KeysArr { get => keysArr; set => keysArr = value; }
+        public string WordWithSpace { get => wordWithSpace; set => wordWithSpace = value; }
 
-		//עדכון מספר הופעות מילה לכל משתמש
-		public int PostWordsFUCountToDB(WordForUser wfu)
+        //עדכון מספר הופעות מילה לכל משתמש
+        public int PostWordsFUCountToDB(WordForUser wfu)
 		{
 			DBService db = new DBService();
 			return db.PostWordsFUCountToDB(wfu);
@@ -103,7 +106,7 @@ namespace Tashbetzometry.Models
 			for (int i = 0; i < dataUserLevel.Count; i++)
 			{
 				rateForUser = (double)(dataUserLevel[i].NumOfHints) / (double)(dataUserLevel[i].NumOfShows);
-				WordForUser wfu1 = new WordForUser(dataUserLevel[i].UserMail, dataUserLevel[i].KeyWord, dataUserLevel[i].Word, dataUserLevel[i].Solution, dataUserLevel[i].NumOfShows, dataUserLevel[i].NumOfHints, rateForUser);
+				WordForUser wfu1 = new WordForUser(dataUserLevel[i].UserMail, dataUserLevel[i].KeyWord, dataUserLevel[i].Word, dataUserLevel[i].Solution, dataUserLevel[i].WordWithSpace, dataUserLevel[i].NumOfShows, dataUserLevel[i].NumOfHints, rateForUser);
 				tempUserDataLevel.Add(wfu1);
 			}
 			tempUserDataLevel.Sort();
@@ -157,7 +160,7 @@ namespace Tashbetzometry.Models
 					}
 				}
 
-				WordForUser l2 = new WordForUser(tempUserDataLevel[i].UserMail, tempUserDataLevel[i].KeyWord, wordInData, tempUserDataLevel[i].Solution, tempUserDataLevel[i].NumOfShows, tempUserDataLevel[i].numOfHints, tempUserDataLevel[i].Rate);
+				WordForUser l2 = new WordForUser(tempUserDataLevel[i].UserMail, tempUserDataLevel[i].KeyWord, wordInData, tempUserDataLevel[i].Solution, tempUserDataLevel[i].WordWithSpace, tempUserDataLevel[i].NumOfShows, tempUserDataLevel[i].numOfHints, tempUserDataLevel[i].Rate);
 				newUserDataLevel.Add(l2);
 			}
 			return newUserDataLevel;

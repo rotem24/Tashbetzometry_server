@@ -24,6 +24,14 @@ namespace Tashbetzometry.Controllers
             SharedCross sc = new SharedCross();
             return sc.GetSharedCross(crossNum);
         }
+        // GET api/SharedCross/{mail}/WatchAll
+        [HttpGet]
+        [Route("api/SharedCross/{mail}/WatchAll")]
+        public List<SharedCross> GetAllSharedCross(string mail)
+        {
+            SharedCross sc = new SharedCross();
+            return sc.GetAllSharedCross(mail);
+        }
 
         //הבאת מספר התשבצים שמשתמש מסוים שיתף -
         // GET api/User/sharedcross/mail

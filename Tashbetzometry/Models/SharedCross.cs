@@ -8,6 +8,7 @@ namespace Tashbetzometry.Models
 {
     public class SharedCross
     {
+       
         int crossNum;
         string sendFrom;
         string userName;
@@ -24,7 +25,7 @@ namespace Tashbetzometry.Models
         Notifications notification;
         int count;
 
-        public int CrossNum { get => crossNum; set => crossNum = value; }
+       public int CrossNum { get => crossNum; set => crossNum = value; }
         public string SendFrom { get => sendFrom; set => sendFrom = value; }
         public string UserName { get => userName; set => userName = value; }
         public string FirstName { get => firstName; set => firstName = value; }
@@ -91,6 +92,16 @@ namespace Tashbetzometry.Models
             Count = count;
         }
 
+        public SharedCross(int crossNum, string grid, string keys, string words, string clues, string legend)
+        {
+            CrossNum = crossNum;
+            Grid = grid;
+            Keys = keys;
+            Words = words;
+            Clues = clues;
+            Legend = legend;
+        }
+
         public int PostSharedCross(SharedCross sharedCross)
         {
             DBService db = new DBService();
@@ -117,6 +128,13 @@ namespace Tashbetzometry.Models
             DBService db = new DBService();
             return db.GetSharedFromForUFromDB(mail);
         }
-        
+
+        //הבאת כלל התשבצים שמשתמש שיתף או שיתפו עמו
+        public List<SharedCross> GetAllSharedCross(string mail)
+        {
+            DBService db = new DBService();
+            return db.GetAllSharedCross(mail);
+        }
+
     }
 }

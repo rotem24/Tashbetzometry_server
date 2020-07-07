@@ -24,8 +24,17 @@ namespace Tashbetzometry.Controllers
 			return wfu.GetUserLevelFromDB(mail);
 		}
 
-		// POST api/<controller>
-		public void Post([FromBody]WordForUser wfu)
+        [HttpGet]
+        [Route("api/WordForUser/{mail}/hardwords")]
+        public List<WordForUser> Gethardwords(string mail)
+        {
+            WordForUser wfu = new WordForUser();
+            return wfu.GetUseHardWordsFromDB(mail);
+        }
+
+
+        // POST api/<controller>
+        public void Post([FromBody]WordForUser wfu)
 		{
 			WordForUser countWFU = new WordForUser();
 			countWFU.PostWordsFUCountToDB(wfu);

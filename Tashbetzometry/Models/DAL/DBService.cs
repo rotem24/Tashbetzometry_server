@@ -1288,9 +1288,11 @@ WHERE N.SendTo = '" + mail + "' ORDER BY N.Date DESC";
             try
             {
                 con = Connect("DBConnectionString");
-                String selectSTR = $@"select *
-  from [dbo].[SharedCross]
-  where SendFrom='{mail}' or SendTo='{mail}'";
+                String selectSTR = $@"SELECT SC.CrossNum, SC.SendFrom, U.UserName, U.FirstName, U.LastName, U.Image, SC.SendTo, SC.Grid, SC.Keys, SC.Words, SC.Clues, SC.Legend
+FROM [User] as U
+INNER JOIN SharedCross as SC
+ON U.Mail = SC.SendFrom
+WHERE SC.SendFrom='{mail}' or SC.SendTo='{mail}'";
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 SharedCross sc = new SharedCross();
@@ -1298,6 +1300,12 @@ WHERE N.SendTo = '" + mail + "' ORDER BY N.Date DESC";
                 {
                     sc = new SharedCross();
                     sc.CrossNum = (int)(dr["CrossNum"]);
+                    sc.SendFrom = Convert.ToString(dr["SendFrom"]);
+                    sc.UserName = Convert.ToString(dr["UserName"]);
+                    sc.FirstName = Convert.ToString(dr["FirstName"]);
+                    sc.LastName = Convert.ToString(dr["LastName"]);
+                    sc.Image = Convert.ToString(dr["Image"]);
+                    sc.SendToGet = Convert.ToString(dr["SendTo"]);
                     sc.Grid = Convert.ToString(dr["Grid"]);
                     sc.Keys = Convert.ToString(dr["Keys"]);
                     sc.Words = Convert.ToString(dr["Words"]);

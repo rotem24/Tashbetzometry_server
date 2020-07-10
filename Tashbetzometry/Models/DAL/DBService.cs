@@ -1329,6 +1329,95 @@ WHERE SC.SendFrom='{mail}' or SC.SendTo='{mail}'";
         }
 
 
+        //הכנסת תשבץ שיצר משתמש מסוים לטבלה
+        public int PostUserCreateCross(CreateCross UCC)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                String cStr = BuildUserCreateCrossCommand(UCC);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildUserCreateCrossCommand(CreateCross UCC)
+        {
+            string command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $"Declare @crossNum int;" + $"INSERT INTO UserCreateCross VALUES ('{UCC.UserMail}', '{UCC.Grid}', '{UCC.Keys}', '{UCC.Words}', '{UCC.Clues}', '{UCC.Legend}');";
+            command = prefix + sb.ToString();
+            return command;
+
+
+
+        }
+
+
+        //הבאת השתבצים ששותפו עבור המשתמש
+        public List<CreateCross> GetAllCreateCross(string mail)
+        {
+            List<CreateCross> lUCC = new List<CreateCross>();
+            SqlConnection con = null;
+            try
+            {
+                con = Connect("DBConnectionString");
+                String selectSTR = $@"SELECT * FROM UserCreateCross 
+WHERE UserMail='{mail}'";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
+                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+               
+                while (dr.Read())
+                {
+                    CreateCross UCC = new CreateCross();
+                    UCC.CrossNum = (int)(dr["CrossNum"]);
+                    UCC.Grid = Convert.ToString(dr["Grid"]);
+                    UCC.Keys = Convert.ToString(dr["Keys"]);
+                    UCC.Words = Convert.ToString(dr["Words"]);
+                    UCC.Clues = Convert.ToString(dr["Clues"]);
+                    UCC.Legend = Convert.ToString(dr["Legend"]);
+                    lUCC.Add(UCC);
+                }
+                return lUCC;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+
 
     }
+
+
+
 }

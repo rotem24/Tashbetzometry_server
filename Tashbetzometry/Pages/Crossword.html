@@ -30,6 +30,8 @@
             //UpdateLikeToWord();
             //updatAddWord();
             //GetUserAllSharedWithCrossFromDB();
+            CreateCross();
+            
 
         });
 
@@ -449,6 +451,26 @@
         }
         function GetUserAllSharedCrossFromDBErrorCB(err) {
             console.log("Error UserSheredCross:", err);
+        }
+        function CreateCross() {
+
+            var UserCreateCross = {
+               
+                Grid: "grid",
+                Keys: "keys",
+                Words: "words",
+                Clues: "clues",
+                UserMail: "dhsjhd",
+                Legend:"legend",
+
+            }
+            ajaxCall("POST", "../api/CreateCross", JSON.stringify(UserCreateCross), postSuccessWICCB, postErrorWICCB);
+        }
+        function postSuccessWICCB(data) {
+            console.log("CreateCross Succsses!", data);
+        }
+        function postErrorWICCB(err) {
+            console.log("Error CreateCross=", err);
         }
 
 

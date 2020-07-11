@@ -1219,7 +1219,7 @@ WHERE UserMail='{mail}'";
 
 
         //הכנסת עזרה מחבר לטבלת HelpFromFriend
-        public int PostHelpFromFriend(HelpFromFriend hff)
+        public int PostHelpFromFriend(HelpFromFriend hff, string keyWordNoSpace)
         {
             SqlConnection con;
             SqlCommand cmd;
@@ -1234,7 +1234,7 @@ WHERE UserMail='{mail}'";
             }
             try
             {
-                String cStr = BuildHelpFromFriendCommand(hff);
+                String cStr = BuildHelpFromFriendCommand(hff, keyWordNoSpace);
                 cmd = CreateCommand(cStr, con);
                 int numEffected = cmd.ExecuteNonQuery();
                 return numEffected;
@@ -1252,14 +1252,14 @@ WHERE UserMail='{mail}'";
                 }
             }
         }
-        private string BuildHelpFromFriendCommand(HelpFromFriend hff)
+        private string BuildHelpFromFriendCommand(HelpFromFriend hff, string keyWordNoSpace)
         {
             if (hff.SendTo.Length <= 1)
             {
                 string command;
                 StringBuilder sb = new StringBuilder();
                 string prefix = $"Declare @HelpNum int;" +
-                                $" INSERT INTO HelpFromFriend VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{hff.KeyWord}', '{hff.IsHelped}');" +
+                                $" INSERT INTO HelpFromFriend VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{keyWordNoSpace}', '{hff.IsHelped}');" +
                                 $" select @HelpNum = SCOPE_IDENTITY()" +
                                 $" INSERT INTO Notifications VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{hff.Notification.Type}', '{hff.Notification.Text}', {"NULL"}, @HelpNum, {"NULL"}, '{hff.Notification.Date}', {0}, {0});";
                 command = prefix + sb.ToString();

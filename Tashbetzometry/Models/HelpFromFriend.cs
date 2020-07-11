@@ -46,8 +46,10 @@ namespace Tashbetzometry.Models
 
         public int PostHelpFromFriend(HelpFromFriend help)
         {
+            string keyWordNoSpace = help.KeyWord.Replace(" ", "");
+
             DBService db = new DBService();
-            int numAffected = db.PostHelpFromFriend(help);
+            int numAffected = db.PostHelpFromFriend(help, keyWordNoSpace);
             return numAffected;
         }
     }

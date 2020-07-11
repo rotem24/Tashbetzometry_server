@@ -17,7 +17,10 @@ namespace Tashbetzometry.Models
         string sendToGet;
         string[] sendTo;
         string type;
+        string text;
         int crossNum;
+        int helpNum;
+        int contestNum;
         DateTime date;
         bool isRead;
         bool hasDone;
@@ -35,7 +38,7 @@ namespace Tashbetzometry.Models
             Date = date;
         }
 
-        public Notifications(int serialNum, string sendFrom, string userName, string firstName, string lastName, string image, string sendToGet, string type, int crossNum, DateTime date, bool isRead, bool hasDone)
+        public Notifications(int serialNum, string sendFrom, string userName, string firstName, string lastName, string image, string sendToGet, string type, string text, int crossNum, int helpNum, int contestNum, DateTime date, bool isRead, bool hasDone)
         {
             SerialNum = serialNum;
             SendFrom = sendFrom;
@@ -46,7 +49,10 @@ namespace Tashbetzometry.Models
             SendToGet = sendToGet;
             SendTo = sendTo;
             Type = type;
+            Text = text;
             CrossNum = crossNum;
+            HelpNum = helpNum;
+            ContestNum = contestNum;
             Date = date;
             IsRead = isRead;
             HasDone = hasDone;
@@ -61,7 +67,10 @@ namespace Tashbetzometry.Models
         public string SendToGet { get => sendToGet; set => sendToGet = value; }
         public string[] SendTo { get => sendTo; set => sendTo = value; }
         public string Type { get => type; set => type = value; }
+        public string Text { get => text; set => text = value; }
         public int CrossNum { get => crossNum; set => crossNum = value; }
+        public int HelpNum { get => helpNum; set => helpNum = value; }
+        public int ContestNum { get => contestNum; set => contestNum = value; }
         public DateTime Date { get => date; set => date = value; }
         public bool IsRead { get => isRead; set => isRead = value; }
         public bool HasDone { get => hasDone; set => hasDone = value; }
@@ -84,10 +93,34 @@ namespace Tashbetzometry.Models
             return db.UpdateHasDoneNotification(crossNum);
         }
 
+        public int UpdateHasDoneHelpNotification(int helpNum)
+        {
+            DBService db = new DBService();
+            return db.UpdateHasDoneHelpNotification(helpNum);
+        }
+
+        public int UpdateHasDoneContesNotification(int ContestNum)
+        {
+            DBService db = new DBService();
+            return db.UpdateHasDoneContesNotification(ContestNum);
+        }
+
         public int DeleteNotification(int crossNum)
         {
             DBService db = new DBService();
             return db.DeleteNotification(crossNum);
+        }
+
+        public int DeleteHelpNotification(int helpNum)
+        {
+            DBService db = new DBService();
+            return db.DeleteHelpNotification(helpNum);
+        }
+
+        public int DeleteContestNotification(int ContestNum)
+        {
+            DBService db = new DBService();
+            return db.DeleteContestNotification(ContestNum);
         }
     }
 }

@@ -42,20 +42,52 @@ namespace Tashbetzometry.Controllers
         }
 
         [HttpPut]
-        [Route("api/Notifications/HasDone/{crossNum}/")]
+        [Route("api/Notifications/HasDone/SharedCross/{crossNum}/")]
         public int PutHasDone(int crossNum)
         {
             Notifications n = new Notifications();
             return n.UpdateHasDoneNotification(crossNum);
         }
 
+        [HttpPut]
+        [Route("api/Notifications/HasDone/HelpFromFriend/{helpNum}/")]
+        public int PutHelpHasDone(int helpNum)
+        {
+            Notifications n = new Notifications();
+            return n.UpdateHasDoneHelpNotification(helpNum);
+        }
+
+        [HttpPut]
+        [Route("api/Notifications/HasDone/Competitions/{ContestNum}/")]
+        public int PutContesHasDone(int ContestNum)
+        {
+            Notifications n = new Notifications();
+            return n.UpdateHasDoneContesNotification(ContestNum);
+        }
+
         // DELETE api/<controller>/5
         [HttpDelete]
-        [Route("api/Notifications/{crossNum}/")]
+        [Route("api/Notifications/SharedCross/{crossNum}/")]
         public int Delete(int crossNum)
         {
             Notifications n = new Notifications();
             return n.DeleteNotification(crossNum);
+        }
+
+        [HttpDelete]
+        [Route("api/Notifications/HelpFromFriend/{helpNum}/")]
+        public int DeleteHelp(int helpNum)
+        {
+            Notifications n = new Notifications();
+            return n.DeleteNotification(helpNum);
+        }
+
+        [HttpDelete]
+        [Route("api/Notifications/Competitions/{ContestNum}/")]
+        public int DeleteContest(int ContestNum)
+        {
+            Notifications n = new Notifications();
+            return n.DeleteContestNotification(ContestNum);
         }
     }
 }

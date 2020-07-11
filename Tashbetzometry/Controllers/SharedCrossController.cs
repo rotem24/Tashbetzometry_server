@@ -24,6 +24,7 @@ namespace Tashbetzometry.Controllers
             SharedCross sc = new SharedCross();
             return sc.GetSharedCross(crossNum);
         }
+
         // GET api/SharedCross/{mail}/WatchAll
         [HttpGet]
         [Route("api/SharedCross/{mail}/WatchAll")]

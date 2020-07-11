@@ -1261,7 +1261,7 @@ WHERE UserMail='{mail}'";
                 string prefix = $"Declare @HelpNum int;" +
                                 $" INSERT INTO HelpFromFriend VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{hff.KeyWord}', '{hff.IsHelped}');" +
                                 $" select @HelpNum = SCOPE_IDENTITY()" +
-                                $" INSERT INTO Notifications VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{hff.Notification.Type}', {"NULL"}, @HelpNum, {"NULL"}, '{hff.Notification.Date}', {0}, {0});";
+                                $" INSERT INTO Notifications VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{hff.Notification.Type}', '{hff.Notification.Text}', {"NULL"}, @HelpNum, {"NULL"}, '{hff.Notification.Date}', {0}, {0});";
                 command = prefix + sb.ToString();
                 return command;
             }
@@ -1270,17 +1270,17 @@ WHERE UserMail='{mail}'";
                 string str = "";
                 for (int i = 0; i < hff.SendTo.Length; i++)
                 {
-                    str += HelpFromFriend(hff.SendFrom, hff.SendTo[i], hff.KeyWord, hff.IsHelped, hff.Notification.Type, hff.Notification.Date);
+                    str += HelpFromFriend(hff.SendFrom, hff.SendTo[i], hff.KeyWord, hff.IsHelped, hff.Notification.Type, hff.Notification.Text, hff.Notification.Date);
                 }
                 return str;
             }
         }
-        private string HelpFromFriend(string sf, string st, string kw, bool ih, string t, DateTime d)
+        private string HelpFromFriend(string sf, string st, string kw, bool ih, string ty, string tx, DateTime d)
         {
             return $"Declare @HelplNum int;" +
                                 $"INSERT INTO HelpFromFriend VALUES ('{sf}', '{st}', '{kw}', '{ih}');" +
                                 $"select @HelplNum = SCOPE_IDENTITY()" +
-                                $"INSERT INTO Notifications VALUES ('{sf}', '{st}', '{t}', {"NULL"}, @HelplNum, {"NULL"}, '{d}', {0}, {0});";
+                                $"INSERT INTO Notifications VALUES ('{sf}', '{st}', '{ty}', '{tx}', {"NULL"}, @HelplNum, {"NULL"}, '{d}', {0}, {0});";
         }
 
 

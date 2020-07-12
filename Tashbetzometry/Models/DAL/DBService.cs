@@ -973,6 +973,7 @@ WHERE SC.CrossNum = '" + crossNum + "';";
             }
         }
 
+
         // הבאת מספר התשבצים ששותפו עם משתמש מסוים
         public int GetSharedFromForUFromDB(string mail)
         {
@@ -1007,6 +1008,7 @@ WHERE SC.CrossNum = '" + crossNum + "';";
 
             }
         }
+
 
         // הבאת מספר התשבצים ששותפו עם משתמש מסוים
         public int GetCountHintsFromDB(string mail)
@@ -1084,6 +1086,7 @@ WHERE SC.CrossNum = '" + crossNum + "';";
                 }
             }
         }
+
 
         //הבאת השתבצים ששותפו עבור המשתמש
         public List<SharedCross> GetAllSharedCross(string mail)
@@ -1178,7 +1181,7 @@ WHERE SC.SendFrom='{mail}' or SC.SendTo='{mail}'";
         }
 
 
-        //הבאת השתבצים ששותפו עבור המשתמש
+        //הבאת השתבצים שייצר המשתמש
         public List<CreateCross> GetAllCreateCross(string mail)
         {
             List<CreateCross> lUCC = new List<CreateCross>();
@@ -1533,8 +1536,8 @@ WHERE N.SendTo = '" + mail + "' ORDER BY N.Date DESC";
         }
 
 
-        //מחיקת התראת שתף תשבץ מטבלת Notifications
-        public int DeleteNotification(int crossNum)
+        //מחיקת התראה מטבלת Notifications
+        public int DeleteNotification(int serialNum)
         {
             SqlConnection con;
             SqlCommand cmd;
@@ -1549,7 +1552,7 @@ WHERE N.SendTo = '" + mail + "' ORDER BY N.Date DESC";
             }
             try
             {
-                string cStr = BuildDeleteNotificationCommand(crossNum);
+                string cStr = BuildDeleteNotificationCommand(serialNum);
                 cmd = CreateCommand(cStr, con);
                 int numEffected = cmd.ExecuteNonQuery();
                 return numEffected;
@@ -1567,40 +1570,48 @@ WHERE N.SendTo = '" + mail + "' ORDER BY N.Date DESC";
                 }
             }
         }
-        private string BuildDeleteNotificationCommand(int crossNum)
+        private string BuildDeleteNotificationCommand(int serialNum)
         {
             string command;
             StringBuilder sb = new StringBuilder();
-            string prefix = $"DELETE FROM Notifications WHERE CrossNum = {crossNum};";
+            string prefix = $"DELETE FROM Notifications WHERE SerialNum = {serialNum};";
             command = prefix + sb.ToString();
             return command;
         }
 
 
-        //מחיקת התראת עזרה מחבר מטבלת Notifications
-        public int DeleteHelpNotification(int helpNum)
+        //הבאת השתבצים ששותפו עבור המשתמש
+        public HelpFromFriend GetHelpFromFriend(int helpNum)
         {
-            SqlConnection con;
-            SqlCommand cmd;
+            SqlConnection con = null;
             try
             {
                 con = Connect("DBConnectionString");
+                String selectSTR = $@"SELECT H.HelpNum, H.SendFrom, U.FirstName, U.LastName, U.Image, H.SendTo, H.KeyWord, W.Word, W.Solution, H.IsHalped
+FROM HelpFromFriend H
+inner join [User] U on H.SendFrom = U.Mail
+inner join Words W on H.KeyWord = W.[Key]
+WHERE H.HelpNum = {helpNum};";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
+                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                HelpFromFriend hff = new HelpFromFriend();
+                while (dr.Read())
+                {
+                    hff.HelpNum = (int)(dr["HelpNum"]);
+                    hff.SendFrom = Convert.ToString(dr["SendFrom"]);             
+                    hff.FirstName = Convert.ToString(dr["FirstName"]);
+                    hff.LastName = Convert.ToString(dr["LastName"]);
+                    hff.Image = Convert.ToString(dr["Image"]);
+                    hff.SendToGet = Convert.ToString(dr["SendTo"]);
+                    hff.KeyWord = Convert.ToString(dr["KeyWord"]);
+                    hff.Word = Convert.ToString(dr["Word"]);
+                    hff.Solution = Convert.ToString(dr["Solution"]);
+                    hff.IsHelped = (bool)(dr["IsHalped"]);
+                }
+                return hff;
             }
             catch (Exception ex)
             {
-                // write to log
-                throw ex;
-            }
-            try
-            {
-                string cStr = BuildDeleteHelpNotificationCommand(helpNum);
-                cmd = CreateCommand(cStr, con);
-                int numEffected = cmd.ExecuteNonQuery();
-                return numEffected;
-            }
-            catch (Exception ex)
-            {
-                return 0;
                 throw (ex);
             }
             finally
@@ -1611,60 +1622,6 @@ WHERE N.SendTo = '" + mail + "' ORDER BY N.Date DESC";
                 }
             }
         }
-        private string BuildDeleteHelpNotificationCommand(int helpNum)
-        {
-            string command;
-            StringBuilder sb = new StringBuilder();
-            string prefix = $"DELETE FROM Notifications WHERE HelpNum = {helpNum};";
-            command = prefix + sb.ToString();
-            return command;
-        }
-
-
-        //מחיקת התראת בקש תחרות מטבלת Notifications
-        public int DeleteContestNotification(int ContestNum)
-        {
-            SqlConnection con;
-            SqlCommand cmd;
-            try
-            {
-                con = Connect("DBConnectionString");
-            }
-            catch (Exception ex)
-            {
-                // write to log
-                throw ex;
-            }
-            try
-            {
-                string cStr = BuildDeleteContestNotificationCommand(ContestNum);
-                cmd = CreateCommand(cStr, con);
-                int numEffected = cmd.ExecuteNonQuery();
-                return numEffected;
-            }
-            catch (Exception ex)
-            {
-                return 0;
-                throw (ex);
-            }
-            finally
-            {
-                if (con != null)
-                {
-                    con.Close();
-                }
-            }
-        }
-        private string BuildDeleteContestNotificationCommand(int ContestNum)
-        {
-            string command;
-            StringBuilder sb = new StringBuilder();
-            string prefix = $"DELETE FROM Notifications WHERE ContestNum = {ContestNum};";
-            command = prefix + sb.ToString();
-            return command;
-        }
-
-
     }
 
 

@@ -67,27 +67,12 @@ namespace Tashbetzometry.Controllers
 
         // DELETE api/<controller>/5
         [HttpDelete]
-        [Route("api/Notifications/SharedCross/{crossNum}/")]
-        public int Delete(int crossNum)
+        [Route("api/Notifications/{serialNum}/")]
+        public int Delete(int serialNum)
         {
             Notifications n = new Notifications();
-            return n.DeleteNotification(crossNum);
+            return n.DeleteNotification(serialNum);
         }
 
-        [HttpDelete]
-        [Route("api/Notifications/HelpFromFriend/{helpNum}/")]
-        public int DeleteHelp(int helpNum)
-        {
-            Notifications n = new Notifications();
-            return n.DeleteNotification(helpNum);
-        }
-
-        [HttpDelete]
-        [Route("api/Notifications/Competitions/{ContestNum}/")]
-        public int DeleteContest(int ContestNum)
-        {
-            Notifications n = new Notifications();
-            return n.DeleteContestNotification(ContestNum);
-        }
     }
 }

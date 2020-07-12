@@ -17,9 +17,12 @@ namespace Tashbetzometry.Controllers
         }
 
         // GET api/<controller>/5
-        public string Get(int id)
+        [HttpGet]
+        [Route("api/HelpFromFriend/{helpNum}")]
+        public HelpFromFriend Get(int helpNum)
         {
-            return "value";
+            HelpFromFriend hff = new HelpFromFriend();
+            return hff.GetHelpFromFriend(helpNum);
         }
 
         // POST api/<controller>

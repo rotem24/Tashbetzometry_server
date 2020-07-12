@@ -105,22 +105,12 @@ namespace Tashbetzometry.Models
             return db.UpdateHasDoneContesNotification(ContestNum);
         }
 
-        public int DeleteNotification(int crossNum)
+        public int DeleteNotification(int serialNum)
         {
             DBService db = new DBService();
-            return db.DeleteNotification(crossNum);
+            return db.DeleteNotification(serialNum);
         }
 
-        public int DeleteHelpNotification(int helpNum)
-        {
-            DBService db = new DBService();
-            return db.DeleteHelpNotification(helpNum);
-        }
-
-        public int DeleteContestNotification(int ContestNum)
-        {
-            DBService db = new DBService();
-            return db.DeleteContestNotification(ContestNum);
-        }
+     
     }
 }

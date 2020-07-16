@@ -1687,6 +1687,67 @@ WHERE H.HelpNum = {helpNum};";
                                 $"select @ContestNum = SCOPE_IDENTITY()" +
                                 $"INSERT INTO Notifications VALUES ('{sendFrom}', '{sendFromTimer}', '{sendTo[0]}', '{sendToTimer}','{grid}', '{keys}', '{word}', '{clues}', '{legend}', {"NULL"},{"NULL"}, @ContestNum, {d}, {0}, {0});";
         }
+
+        //עדכון טבלת עזרה מחבר כי החבר ענה והכנסת ההתראה לטבלת Notifications
+        public int InsertHelpNotification(Notifications n)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                String cStr = BuildHelpNotificationCommand(n);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildHelpNotificationCommand(Notifications n)
+        {
+            if (n.SendTo.Length <= 1)
+            {
+                string command;
+                StringBuilder sb = new StringBuilder();
+                string prefix = $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {n.HelpNum}; " +
+                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendTo[0]}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{n.Date}', {0}, {0});";
+                command = prefix + sb.ToString();
+                return command;
+            }
+            else
+            {
+                string str = "";
+                for (int i = 0; i < n.SendTo.Length; i++)
+                {
+                    str += HelpNotification(n.SendFrom, n.SendTo[i], n.Type, n.Text, n.HelpNum, n.Date);
+                }
+                return str;
+            }
+        }
+        private string HelpNotification(string sf, string st, string ty, string tx, int hn, DateTime d)
+        {
+            return $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {hn}; " +
+                   $"INSERT INTO Notifications VALUES('{sf}', '{st}', '{ty}', '{tx}', {"NULL"}, {hn}, {"NULL"}, '{d}', {0}, {0});";
+        }
     }
 
 }

@@ -28,10 +28,11 @@ namespace Tashbetzometry.Controllers
         }
 
         // POST api/<controller>
-        public void Post([FromBody] Notifications n)
+        public int Post([FromBody] Notifications n)
         {
+            Notifications nf = new Notifications();
+            return nf.InsertHelpNotification(n);
         }
-
         // PUT api/<controller>/5
         [HttpPut]
         [Route("api/Notifications/IsRead/{mail}/")]

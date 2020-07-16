@@ -58,6 +58,16 @@ namespace Tashbetzometry.Models
             HasDone = hasDone;
         }
 
+        public Notifications(string sendFrom, string[] sendTo, string type, string text, int helpNum, DateTime date)
+        {
+            SendFrom = sendFrom;
+            SendTo = sendTo;
+            Type = type;
+            Text = text;
+            HelpNum = helpNum;
+            Date = date;
+        }
+
         public int SerialNum { get => serialNum; set => serialNum = value; }
         public string SendFrom { get => sendFrom; set => sendFrom = value; }
         public string UserName { get => userName; set => userName = value; }
@@ -74,6 +84,7 @@ namespace Tashbetzometry.Models
         public DateTime Date { get => date; set => date = value; }
         public bool IsRead { get => isRead; set => isRead = value; }
         public bool HasDone { get => hasDone; set => hasDone = value; }
+
 
         public List<Notifications> GetNotifications(string mail)
         {
@@ -111,6 +122,10 @@ namespace Tashbetzometry.Models
             return db.DeleteNotification(serialNum);
         }
 
-     
+        public int InsertHelpNotification(Notifications n)
+        {
+            DBService db = new DBService();
+            return db.InsertHelpNotification(n);
+        }
     }
 }

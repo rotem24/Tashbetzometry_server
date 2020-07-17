@@ -58,10 +58,10 @@ namespace Tashbetzometry.Models
             HasDone = hasDone;
         }
 
-        public Notifications(string sendFrom, string[] sendTo, string type, string text, int helpNum, DateTime date)
+        public Notifications(string sendFrom, string sendToGet, string type, string text, int helpNum, DateTime date)
         {
             SendFrom = sendFrom;
-            SendTo = sendTo;
+            SendToGet = sendToGet;
             Type = type;
             Text = text;
             HelpNum = helpNum;

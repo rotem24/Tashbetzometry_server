@@ -616,6 +616,7 @@ namespace Tashbetzometry.Models.DAL
         }
         private string BuildSharedCrossCommand(SharedCross sc)
         {
+
             if (sc.SendTo.Length <= 1)
             {
                 string command;
@@ -1257,6 +1258,10 @@ WHERE UserMail='{mail}'";
         }
         private string BuildHelpFromFriendCommand(HelpFromFriend hff, string keyWordNoSpace)
         {
+            
+            DateTime date = DateTime.Now;
+            string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
+
             if (hff.SendTo.Length <= 1)
             {
                 string command;
@@ -1264,7 +1269,7 @@ WHERE UserMail='{mail}'";
                 string prefix = $"Declare @HelpNum int;" +
                                 $" INSERT INTO HelpFromFriend VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{keyWordNoSpace}', '{hff.IsHelped}');" +
                                 $" select @HelpNum = SCOPE_IDENTITY()" +
-                                $" INSERT INTO Notifications VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{hff.Notification.Type}', '{hff.Notification.Text}', {"NULL"}, @HelpNum, {"NULL"}, '{hff.Notification.Date}', {0}, {0});";
+                                $" INSERT INTO Notifications VALUES ('{hff.SendFrom}', '{hff.SendTo[0]}', '{hff.Notification.Type}', '{hff.Notification.Text}', {"NULL"}, @HelpNum, {"NULL"}, '{SQLFormat}', {0}, {0});";
                 command = prefix + sb.ToString();
                 return command;
             }
@@ -1273,12 +1278,12 @@ WHERE UserMail='{mail}'";
                 string str = "";
                 for (int i = 0; i < hff.SendTo.Length; i++)
                 {
-                    str += HelpFromFriend(hff.SendFrom, hff.SendTo[i], hff.KeyWord, hff.IsHelped, hff.Notification.Type, hff.Notification.Text, hff.Notification.Date);
+                    str += HelpFromFriend(hff.SendFrom, hff.SendTo[i], hff.KeyWord, hff.IsHelped, hff.Notification.Type, hff.Notification.Text, SQLFormat);
                 }
                 return str;
             }
         }
-        private string HelpFromFriend(string sf, string st, string kw, bool ih, string ty, string tx, DateTime d)
+        private string HelpFromFriend(string sf, string st, string kw, bool ih, string ty, string tx, string d)
         {
             return $"Declare @HelplNum int;" +
                                 $"INSERT INTO HelpFromFriend VALUES ('{sf}', '{st}', '{kw}', '{ih}');" +
@@ -1623,6 +1628,7 @@ WHERE H.HelpNum = {helpNum};";
             }
         }
 
+
         //עדכון טבלת תשחץ תחרות
         public int PostCompetitions(Competitions competitions)
         {
@@ -1659,6 +1665,9 @@ WHERE H.HelpNum = {helpNum};";
         }
         private string BuildCompetitionsCommand(Competitions c)
         {
+            DateTime date = DateTime.Now;
+            string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
+
             if (c.SendTo.Length <= 1)
             {
                 string command;
@@ -1666,7 +1675,7 @@ WHERE H.HelpNum = {helpNum};";
                 string prefix = $"Declare @ContestNum int;" +
                                 $" INSERT INTO CompetitionsCross VALUES ('{c.SendFrom}', '{c.SendFromTimer}', '{c.SendTo[0]}', '{c.SendToTimer}','{c.Grid}', '{c.Keys}', '{c.Word}', '{c.Clues}', '{c.Legend}');" +
                                 $" select @ContestNum = SCOPE_IDENTITY()" +
-                                $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo[0]}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"},{"NULL"}, @ContestNum, '{c.Notification.Date}', {0}, {0});";
+                                $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo[0]}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"},{"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
                 command = prefix + sb.ToString();
                 return command;
             }
@@ -1675,12 +1684,12 @@ WHERE H.HelpNum = {helpNum};";
                 string str = "";
                 for (int i = 0; i < c.SendTo.Length; i++)
                 {
-                    str += Competitions(c.SendFrom, c.SendFromTimer, c.SendTo[i], c.SendToTimer, c.Grid, c.Keys, c.Word, c.Clues, c.Legend, c.Notification.Type, c.Notification.Text, c.Notification.Date);
+                    str += Competitions(c.SendFrom, c.SendFromTimer, c.SendTo[i], c.SendToTimer, c.Grid, c.Keys, c.Word, c.Clues, c.Legend, c.Notification.Type, c.Notification.Text, SQLFormat);
                 }
                 return str;
             }
         }
-        private string Competitions(string sendFrom, int sendFromTimer, string sendTo, int sendToTimer, string grid, string keys, string word, string clues, string legend, string type, string text, DateTime d)
+        private string Competitions(string sendFrom, int sendFromTimer, string sendTo, int sendToTimer, string grid, string keys, string word, string clues, string legend, string type, string text, string d)
         {
             return $"Declare @ContestNum int;" +
                                 $"INSERT INTO CompetitionsCross VALUES ('{sendFrom}', '{sendFromTimer}', '{sendTo[0]}', '{sendToTimer}','{grid}', '{keys}', '{word}', '{clues}', '{legend}');" +
@@ -1688,6 +1697,8 @@ WHERE H.HelpNum = {helpNum};";
                                 $"INSERT INTO Notifications VALUES ('{sendFrom}', '{sendFromTimer}', '{sendTo[0]}', '{sendToTimer}','{grid}', '{keys}', '{word}', '{clues}', '{legend}', {"NULL"},{"NULL"}, @ContestNum, {d}, {0}, {0});";
         }
 
+       
+        
         //עדכון טבלת עזרה מחבר כי החבר ענה והכנסת ההתראה לטבלת Notifications
         public int InsertHelpNotification(Notifications n)
         {
@@ -1724,32 +1735,21 @@ WHERE H.HelpNum = {helpNum};";
         }
         private string BuildHelpNotificationCommand(Notifications n)
         {
-            if (n.SendTo.Length <= 1)
-            {
-                string command;
+            DateTime date = DateTime.Now;
+            string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
+
+            string command;
                 StringBuilder sb = new StringBuilder();
                 string prefix = $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {n.HelpNum}; " +
-                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendTo[0]}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{n.Date}', {0}, {0});";
+                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendToGet}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{SQLFormat}', {0}, {0});";
                 command = prefix + sb.ToString();
                 return command;
-            }
-            else
-            {
-                string str = "";
-                for (int i = 0; i < n.SendTo.Length; i++)
-                {
-                    str += HelpNotification(n.SendFrom, n.SendTo[i], n.Type, n.Text, n.HelpNum, n.Date);
-                }
-                return str;
-            }
         }
-        private string HelpNotification(string sf, string st, string ty, string tx, int hn, DateTime d)
-        {
-            return $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {hn}; " +
-                   $"INSERT INTO Notifications VALUES('{sf}', '{st}', '{ty}', '{tx}', {"NULL"}, {hn}, {"NULL"}, '{d}', {0}, {0});";
-        }
-    }
 
+
+
+     
+    }
 }
 
 

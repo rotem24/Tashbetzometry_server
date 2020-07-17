@@ -1193,7 +1193,7 @@ WHERE SC.SendFrom='{mail}' or SC.SendTo='{mail}'";
 WHERE UserMail='{mail}'";
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
-               
+
                 while (dr.Read())
                 {
                     CreateCross UCC = new CreateCross();
@@ -1598,7 +1598,7 @@ WHERE H.HelpNum = {helpNum};";
                 while (dr.Read())
                 {
                     hff.HelpNum = (int)(dr["HelpNum"]);
-                    hff.SendFrom = Convert.ToString(dr["SendFrom"]);             
+                    hff.SendFrom = Convert.ToString(dr["SendFrom"]);
                     hff.FirstName = Convert.ToString(dr["FirstName"]);
                     hff.LastName = Convert.ToString(dr["LastName"]);
                     hff.Image = Convert.ToString(dr["Image"]);
@@ -1622,8 +1622,135 @@ WHERE H.HelpNum = {helpNum};";
                 }
             }
         }
+
+        //עדכון טבלת תשחץ תחרות
+        public int PostCompetitions(Competitions competitions)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                String cStr = BuildCompetitionsCommand(competitions);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildCompetitionsCommand(Competitions c)
+        {
+            if (c.SendTo.Length <= 1)
+            {
+                string command;
+                StringBuilder sb = new StringBuilder();
+                string prefix = $"Declare @ContestNum int;" +
+                                $" INSERT INTO CompetitionsCross VALUES ('{c.SendFrom}', '{c.SendFromTimer}', '{c.SendTo[0]}', '{c.SendToTimer}','{c.Grid}', '{c.Keys}', '{c.Word}', '{c.Clues}', '{c.Legend}');" +
+                                $" select @ContestNum = SCOPE_IDENTITY()" +
+                                $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo[0]}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"},{"NULL"}, @ContestNum, '{c.Notification.Date}', {0}, {0});";
+                command = prefix + sb.ToString();
+                return command;
+            }
+            else
+            {
+                string str = "";
+                for (int i = 0; i < c.SendTo.Length; i++)
+                {
+                    str += Competitions(c.SendFrom, c.SendFromTimer, c.SendTo[i], c.SendToTimer, c.Grid, c.Keys, c.Word, c.Clues, c.Legend, c.Notification.Type, c.Notification.Text, c.Notification.Date);
+                }
+                return str;
+            }
+        }
+        private string Competitions(string sendFrom, int sendFromTimer, string sendTo, int sendToTimer, string grid, string keys, string word, string clues, string legend, string type, string text, DateTime d)
+        {
+            return $"Declare @ContestNum int;" +
+                                $"INSERT INTO CompetitionsCross VALUES ('{sendFrom}', '{sendFromTimer}', '{sendTo[0]}', '{sendToTimer}','{grid}', '{keys}', '{word}', '{clues}', '{legend}');" +
+                                $"select @ContestNum = SCOPE_IDENTITY()" +
+                                $"INSERT INTO Notifications VALUES ('{sendFrom}', '{sendFromTimer}', '{sendTo[0]}', '{sendToTimer}','{grid}', '{keys}', '{word}', '{clues}', '{legend}', {"NULL"},{"NULL"}, @ContestNum, {d}, {0}, {0});";
+        }
+
+        //עדכון טבלת עזרה מחבר כי החבר ענה והכנסת ההתראה לטבלת Notifications
+        public int InsertHelpNotification(Notifications n)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                String cStr = BuildHelpNotificationCommand(n);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildHelpNotificationCommand(Notifications n)
+        {
+            if (n.SendTo.Length <= 1)
+            {
+                string command;
+                StringBuilder sb = new StringBuilder();
+                string prefix = $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {n.HelpNum}; " +
+                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendTo[0]}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{n.Date}', {0}, {0});";
+                command = prefix + sb.ToString();
+                return command;
+            }
+            else
+            {
+                string str = "";
+                for (int i = 0; i < n.SendTo.Length; i++)
+                {
+                    str += HelpNotification(n.SendFrom, n.SendTo[i], n.Type, n.Text, n.HelpNum, n.Date);
+                }
+                return str;
+            }
+        }
+        private string HelpNotification(string sf, string st, string ty, string tx, int hn, DateTime d)
+        {
+            return $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {hn}; " +
+                   $"INSERT INTO Notifications VALUES('{sf}', '{st}', '{ty}', '{tx}', {"NULL"}, {hn}, {"NULL"}, '{d}', {0}, {0});";
+        }
     }
 
-
-
 }
+
+
+

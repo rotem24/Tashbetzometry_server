@@ -18,6 +18,7 @@ namespace Tashbetzometry.Models
         string word;
         string solution;
         bool isHelped;
+        string userAnswer;
 
         string[] sendTo;
         Notifications notification;
@@ -36,7 +37,7 @@ namespace Tashbetzometry.Models
             Notification = notification;
         }
 
-        public HelpFromFriend(int helpNum, string sendFrom, string firstName, string lastName, string image, string sendToGet, string keyWord, string word, string solution, bool isHelped)
+        public HelpFromFriend(int helpNum, string sendFrom, string firstName, string lastName, string image, string sendToGet, string keyWord, string word, string solution, bool isHelped, string userAnswer)
         {
             HelpNum = helpNum;
             SendFrom = sendFrom;
@@ -48,6 +49,7 @@ namespace Tashbetzometry.Models
             Word = word;
             Solution = solution;
             IsHelped = isHelped;
+            UserAnswer = userAnswer;
         }
 
         public int HelpNum { get => helpNum; set => helpNum = value; }
@@ -62,7 +64,7 @@ namespace Tashbetzometry.Models
         public bool IsHelped { get => isHelped; set => isHelped = value; }
         public string[] SendTo { get => sendTo; set => sendTo = value; }
         public Notifications Notification { get => notification; set => notification = value; }
-
+        public string UserAnswer { get => userAnswer; set => userAnswer = value; }
 
         public int PostHelpFromFriend(HelpFromFriend help)
         {

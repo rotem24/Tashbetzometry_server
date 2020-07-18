@@ -24,6 +24,7 @@ namespace Tashbetzometry.Models
         DateTime date;
         bool isRead;
         bool hasDone;
+        HelpFromFriend helpFromFriend;
 
         public Notifications()
         {
@@ -58,7 +59,7 @@ namespace Tashbetzometry.Models
             HasDone = hasDone;
         }
 
-        public Notifications(string sendFrom, string sendToGet, string type, string text, int helpNum, DateTime date)
+        public Notifications(string sendFrom, string sendToGet, string type, string text, int helpNum, DateTime date, HelpFromFriend helpFromFriend)
         {
             SendFrom = sendFrom;
             SendToGet = sendToGet;
@@ -66,6 +67,7 @@ namespace Tashbetzometry.Models
             Text = text;
             HelpNum = helpNum;
             Date = date;
+            HelpFromFriend = helpFromFriend;
         }
 
         public int SerialNum { get => serialNum; set => serialNum = value; }
@@ -84,6 +86,7 @@ namespace Tashbetzometry.Models
         public DateTime Date { get => date; set => date = value; }
         public bool IsRead { get => isRead; set => isRead = value; }
         public bool HasDone { get => hasDone; set => hasDone = value; }
+        public HelpFromFriend HelpFromFriend { get => helpFromFriend; set => helpFromFriend = value; }
 
         public List<Notifications> GetNotifications(string mail)
         {

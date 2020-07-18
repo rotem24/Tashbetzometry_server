@@ -616,6 +616,8 @@ namespace Tashbetzometry.Models.DAL
         }
         private string BuildSharedCrossCommand(SharedCross sc)
         {
+            DateTime date = DateTime.Now;
+            string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
 
             if (sc.SendTo.Length <= 1)
             {
@@ -624,7 +626,7 @@ namespace Tashbetzometry.Models.DAL
                 string prefix = $"Declare @crossNum int;" +
                                 $" INSERT INTO SharedCross VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Grid}', '{sc.Keys}', '{sc.Words}', '{sc.Clues}', '{sc.Legend}');" +
                                 $" select @crossNum = SCOPE_IDENTITY()" +
-                                $" INSERT INTO Notifications VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Notification.Type}', '{sc.Notification.Text}', @crossNum, {"NULL"}, {"NULL"}, '{sc.Notification.Date}', {0}, {0});";
+                                $" INSERT INTO Notifications VALUES ('{sc.SendFrom}', '{sc.SendTo[0]}', '{sc.Notification.Type}', '{sc.Notification.Text}', @crossNum, {"NULL"}, {"NULL"}, '{SQLFormat}', {0}, {0});";
                 command = prefix + sb.ToString();
                 return command;
             }
@@ -633,12 +635,12 @@ namespace Tashbetzometry.Models.DAL
                 string str = "";
                 for (int i = 0; i < sc.SendTo.Length; i++)
                 {
-                    str += SharedCross(sc.SendFrom, sc.SendTo[i], sc.Grid, sc.Keys, sc.Words, sc.Clues, sc.Legend, sc.Notification.Type, sc.Notification.Text, sc.Notification.Date);
+                    str += SharedCross(sc.SendFrom, sc.SendTo[i], sc.Grid, sc.Keys, sc.Words, sc.Clues, sc.Legend, sc.Notification.Type, sc.Notification.Text, SQLFormat);
                 }
                 return str;
             }
         }
-        private string SharedCross(string sf, string st, string g, string k, string w, string c, string l, string ty, string tx, DateTime d)
+        private string SharedCross(string sf, string st, string g, string k, string w, string c, string l, string ty, string tx, string d)
         {
             return $"Declare @crossNum int;" +
                                 $"INSERT INTO SharedCross VALUES ('{sf}', '{st}', '{g}', '{k}', '{w}', '{c}', '{l}');" +

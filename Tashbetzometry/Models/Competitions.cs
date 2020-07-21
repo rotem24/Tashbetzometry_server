@@ -27,17 +27,17 @@ namespace Tashbetzometry.Models
 
         }
 
-        public Competitions(string sendFrom, int sendFromTimer, int sendToTimer, string grid, string keys, string word, string clues, string legend, string[] sendTo, Notifications notification)
+        public Competitions(string sendFrom, int sendFromTimer, string[] sendTo, int sendToTimer, string grid, string keys, string word, string clues, string legend, Notifications notification)
         {
             SendFrom = sendFrom;
             SendFromTimer = sendFromTimer;
+            SendTo = sendTo;
             SendToTimer = sendToTimer;
             Grid = grid;
             Keys = keys;
             Word = word;
             Clues = clues;
             Legend = legend;
-            SendTo = sendTo;
             Notification = notification;
         }
 

@@ -76,6 +76,13 @@ namespace Tashbetzometry.Controllers
             User u = new User();
             u.UpdateThemeDB(user);
         }
+        [HttpPut]
+        [Route("api/User/Photo")]
+        public void PutPhoto([FromBody] User user)
+        {
+            User u = new User();
+            u.UpdatePhotoDB(user);
+        }
 
         // DELETE api/<controller>/5
         public void Delete(int id)

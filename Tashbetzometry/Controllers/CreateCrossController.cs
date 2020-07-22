@@ -30,6 +30,16 @@ namespace Tashbetzometry.Controllers
             return UCC.GetAllCreateCross(mail);
         }
 
+        //הבאת מספר התשבצים שמשתמש מסוים שיתף -
+        // GET api/User/CreateCross/mail
+        [HttpGet]
+        [Route("api/CreateCross/{mail}/count")]
+        public int GetCreateCross(string mail)
+        {
+            CreateCross CC = new CreateCross();
+            return CC.GetCreateCrossForUFromDB(mail);
+        }
+
         // POST api/<controller>
         public void Post([FromBody]CreateCross UserCross)
         {

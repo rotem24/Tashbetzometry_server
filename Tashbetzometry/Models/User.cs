@@ -39,6 +39,7 @@ namespace Tashbetzometry.Models
 			Mail = mail;
 			Password = password;
 		}
+	
 
 		public string Mail { get => mail; set => mail = value; }
 		public string Password { get => password; set => password = value; }

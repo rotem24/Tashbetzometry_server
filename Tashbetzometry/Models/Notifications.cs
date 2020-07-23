@@ -70,6 +70,7 @@ namespace Tashbetzometry.Models
             HelpFromFriend = helpFromFriend;
         }
 
+
         public int SerialNum { get => serialNum; set => serialNum = value; }
         public string SendFrom { get => sendFrom; set => sendFrom = value; }
         public string UserName { get => userName; set => userName = value; }

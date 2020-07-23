@@ -935,10 +935,11 @@ WHERE SC.CrossNum = '" + crossNum + "';";
         {
             string command;
             StringBuilder sb = new StringBuilder();
-            string prefix = $"UPDATE [User] SET [Image] = '{user.I   mage}'  WHERE mail = '{user.Mail}'";
+            string prefix = $"UPDATE [User] SET [Image] = '{user.Image}'  WHERE mail = '{user.Mail}'";
             command = prefix + sb.ToString();
             return command;
         }
+
 
         //עדכון מילים בעלות עשר לייקים בטבלת words
         public int UpdateNewWordsToDB(Words w)
@@ -1092,6 +1093,7 @@ WHERE SC.CrossNum = '" + crossNum + "';";
             }
         }
 
+
         // הבאת מספר התשבצים ששיתף משתמש מסוים
         public int GetCreateCrossForUFromDB(string mail)
         {
@@ -1126,6 +1128,7 @@ WHERE SC.CrossNum = '" + crossNum + "';";
                 }
             }
         }
+
 
         // הבאת המילים הקשות לכל משתמש ומספר ההופעות שלהן
         public List<WordForUser> GetUseHardWordsFromDB(string mail)
@@ -1822,15 +1825,15 @@ WHERE H.HelpNum = {helpNum};";
                 StringBuilder sb = new StringBuilder();
                 string prefix = $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {n.HelpNum}; " +
                                 $"UPDATE HelpFromFriend SET UserAnswer = '{n.HelpFromFriend.UserAnswer}' WHERE HelpNum = {n.HelpNum}; " +
-                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendToGet}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{SQLFormat}', {0}, {0});";
+                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendToGet}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{SQLFormat}', {0}, '{n.HasDone}');";
                 command = prefix + sb.ToString();
                 return command;
         }
 
 
 
-     
-    }
+         }
+
 }
 
 

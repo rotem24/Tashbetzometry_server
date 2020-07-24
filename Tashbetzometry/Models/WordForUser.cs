@@ -51,15 +51,27 @@ namespace Tashbetzometry.Models
             Solution = solution;
         }
 
+        public WordForUser(string userMail, string keyWord, string word, string solution, int numOfShows, int numOfHints, string wordWithSpace)
+        {
+            UserMail = userMail;
+            KeyWord = keyWord;
+            Word = word;
+            Solution = solution;
+            NumOfShows = numOfShows;
+            NumOfHints = numOfHints;
+            WordWithSpace = wordWithSpace;
+        }
+
         public string UserMail { get => userMail; set => userMail = value; }
         public string KeyWord { get => keyWord; set => keyWord = value; }
         public string Word { get => word; set => word = value; }
         public string Solution { get => solution; set => solution = value; }
         public int NumOfShows { get => numOfShows; set => numOfShows = value; }
         public int NumOfHints { get => numOfHints; set => numOfHints = value; }
+        public string WordWithSpace { get => wordWithSpace; set => wordWithSpace = value; }
         public double Rate { get => rate; set => rate = value; }
         public string[] KeysArr { get => keysArr; set => keysArr = value; }
-        public string WordWithSpace { get => wordWithSpace; set => wordWithSpace = value; }
+        
 
         //עדכון מספר הופעות מילה לכל משתמש
         public int PostWordsFUCountToDB(WordForUser wfu)
@@ -178,7 +190,6 @@ namespace Tashbetzometry.Models
         {
             DBService db = new DBService();
             return db.GetUseHardWordsFromDB(mail);
-
 
         }
   

@@ -414,10 +414,10 @@ namespace Tashbetzometry.Models.DAL
             try
             {
                 con = Connect("DBConnectionString");
-                String selectSTR = $@"select distinct TW.UserMail, TW.WordKey, TW.NumOfShows, TH.NumOfHints, W.Word, W.Solution
+                String selectSTR = $@"select distinct TW.UserMail, TW.WordKey, TW.NumOfShows, TH.NumOfHints, W.Word, W.Solution,W.WordWithSpace
                 from (TempWordForUser TW inner join  TempHintsForUser TH on TW.UserMail = TH.UserMail and TW.WordKey = TH.WordKey) inner join Words W on TW.WordKey = W.[Key]
                 where TW.UserMail = '{mail}'
-                group by TW.UserMail, TW.WordKey, TW.NumOfShows, TH.NumOfHints, W.Word, W.Solution";
+                group by TW.UserMail, TW.WordKey, TW.NumOfShows, TH.NumOfHints, W.Word, W.Solution, W.WordWithSpace";
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
@@ -429,7 +429,8 @@ namespace Tashbetzometry.Models.DAL
                         Convert.ToString(dr["Word"]),
                         Convert.ToString(dr["Solution"]),
                         (int)(dr["NumOfShows"]),
-                        (int)(dr["NumOfHints"]));
+                        (int)(dr["NumOfHints"]),
+                        Convert.ToString(dr["Solution"]));
 
                     wfu.Add(a);
                 }
@@ -1340,7 +1341,7 @@ WHERE UserMail='{mail}'";
         }
         private string BuildHelpFromFriendCommand(HelpFromFriend hff, string keyWordNoSpace)
         {
-            
+
             DateTime date = DateTime.Now;
             string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -1780,8 +1781,8 @@ WHERE H.HelpNum = {helpNum};";
                                 $"INSERT INTO Notifications VALUES ('{sendFrom}', '{sendTo[0]}','{grid}', '{keys}', '{word}', '{clues}', '{legend}','{sendFromTimer}','{sendToTimer}', {"NULL"},{"NULL"}, @ContestNum, {d}, {0}, {0});";
         }
 
-       
-        
+
+
         //עדכון טבלת עזרה מחבר כי החבר ענה והכנסת ההתראה לטבלת Notifications
         public int InsertHelpNotification(Notifications n)
         {
@@ -1822,17 +1823,17 @@ WHERE H.HelpNum = {helpNum};";
             string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
 
             string command;
-                StringBuilder sb = new StringBuilder();
-                string prefix = $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {n.HelpNum}; " +
-                                $"UPDATE HelpFromFriend SET UserAnswer = '{n.HelpFromFriend.UserAnswer}' WHERE HelpNum = {n.HelpNum}; " +
-                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendToGet}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{SQLFormat}', {0}, '{n.HasDone}');";
-                command = prefix + sb.ToString();
-                return command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {n.HelpNum}; " +
+                            $"UPDATE HelpFromFriend SET UserAnswer = '{n.HelpFromFriend.UserAnswer}' WHERE HelpNum = {n.HelpNum}; " +
+                            $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendToGet}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{SQLFormat}', {0}, '{n.HasDone}');";
+            command = prefix + sb.ToString();
+            return command;
         }
 
 
 
-         }
+    }
 
 }
 

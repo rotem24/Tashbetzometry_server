@@ -39,6 +39,7 @@ namespace Tashbetzometry.Models
 			Mail = mail;
 			Password = password;
 		}
+	
 
 		public string Mail { get => mail; set => mail = value; }
 		public string Password { get => password; set => password = value; }
@@ -99,13 +100,20 @@ namespace Tashbetzometry.Models
             return db.GetAllUsersFromDB();
         }
 		//עדכון ערכת צבעים
-		public int UpdateThemeDB(User user)//copy
+		public int UpdateThemeDB(User user)
 		{
 			DBService db = new DBService();
 			return db.UpdateThemeDB(user);
 		}
+        //עדכון תמונת פרופיל
+        public int UpdatePhotoDB(User user)
+        {
+            DBService db = new DBService();
+            return db.UpdatPhotoDB(user);
+        }
+        
 
-    
+
 
 
 

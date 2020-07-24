@@ -81,7 +81,12 @@ namespace Tashbetzometry.Models.DAL
             DBService db = new DBService();
             return db.GetAllCreateCross(mail);
         }
-      
+        public int GetCreateCrossForUFromDB(string mail)
+        {
+            DBService db = new DBService();
+            return db.GetCreateCrossForUFromDB(mail);
+        }
 
+        
     }
 }

@@ -897,6 +897,50 @@ WHERE SC.CrossNum = '" + crossNum + "';";
         }
 
 
+        //עדכון תמונת פרופיל למשתמש
+        public int UpdatPhotoDB(User user)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                string cStr = BuildUpdatePhotoCommand(user);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildUpdatePhotoCommand(User user)
+        {
+            string command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $"UPDATE [User] SET [Image] = '{user.Image}'  WHERE mail = '{user.Mail}'";
+            command = prefix + sb.ToString();
+            return command;
+        }
+
+
         //עדכון מילים בעלות עשר לייקים בטבלת words
         public int UpdateNewWordsToDB(Words w)
         {
@@ -1046,6 +1090,42 @@ WHERE SC.CrossNum = '" + crossNum + "';";
                     con.Close();
                 }
 
+            }
+        }
+
+
+        // הבאת מספר התשבצים ששיתף משתמש מסוים
+        public int GetCreateCrossForUFromDB(string mail)
+        {
+            int num = 0;
+            SqlConnection con = null;
+            try
+            {
+                con = Connect("DBConnectionString");
+                String selectSTR = $@"  select count(UserMail) as 'count'
+          from [bgroup11_prod].[dbo].[UserCreateCross]
+        where UserMail='{mail}'  ";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
+                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+                while (dr.Read())
+                {
+                    num = (int)(dr["count"]);
+                    return num;
+                }
+                return num;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
             }
         }
 
@@ -1749,15 +1829,15 @@ WHERE H.HelpNum = {helpNum};";
                 StringBuilder sb = new StringBuilder();
                 string prefix = $"UPDATE HelpFromFriend SET IsHalped = 1 WHERE HelpNum = {n.HelpNum}; " +
                                 $"UPDATE HelpFromFriend SET UserAnswer = '{n.HelpFromFriend.UserAnswer}' WHERE HelpNum = {n.HelpNum}; " +
-                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendToGet}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{SQLFormat}', {0}, {0});";
+                                $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendToGet}', '{n.Type}', '{n.Text}', {"NULL"}, {n.HelpNum}, {"NULL"}, '{SQLFormat}', {0}, '{n.HasDone}');";
                 command = prefix + sb.ToString();
                 return command;
         }
 
 
 
-     
-    }
+         }
+
 }
 
 

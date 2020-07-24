@@ -9,11 +9,14 @@ namespace Tashbetzometry.Models.DAL
     {
         int crossNum;
         string userMail;
+        string firstName;
+        string lastName;
         string grid;
         string keys;
         string words;
         string clues;
         string legend;
+
 
         public CreateCross()
         {
@@ -41,8 +44,23 @@ namespace Tashbetzometry.Models.DAL
             Legend = legend;
         }
 
+        public CreateCross(int crossNum, string userMail, string firstName, string lastName, string grid, string keys, string words, string clues, string legend)
+        {
+            CrossNum = crossNum;
+            UserMail = userMail;
+            FirstName = firstName;
+            LastName = lastName;
+            Grid = grid;
+            Keys = keys;
+            Words = words;
+            Clues = clues;
+            Legend = legend;
+        }
+
         public int CrossNum { get => crossNum; set => crossNum = value; }
         public string UserMail { get => userMail; set => userMail = value; }
+        public string FirstName { get => firstName; set => firstName = value; }
+        public string LastName { get => lastName; set => lastName = value; }
         public string Grid { get => grid; set => grid = value; }
         public string Keys { get => keys; set => keys = value; }
         public string Words { get => words; set => words = value; }

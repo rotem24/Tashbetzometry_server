@@ -10,9 +10,9 @@ namespace Tashbetzometry.Models
     {
         int contestNum;
         string sendFrom;
-        int sendFromTimer;
+        int fromCountAnswer;
         string sendToget;
-        int sendToTimer;
+        int toCountAnswer;
         string grid;
         string keys;
         string word;
@@ -27,27 +27,28 @@ namespace Tashbetzometry.Models
 
         }
 
-        public Competitions(string sendFrom, int sendFromTimer, string[] sendTo, int sendToTimer, string grid, string keys, string word, string clues, string legend, Notifications notification)
+        public Competitions(string sendFrom, int fromCountAnswer, string sendToget, int toCountAnswer, string grid, string keys, string word, string clues, string legend, string[] sendTo, Notifications notification)
         {
             SendFrom = sendFrom;
-            SendFromTimer = sendFromTimer;
-            SendTo = sendTo;
-            SendToTimer = sendToTimer;
+            FromCountAnswer = fromCountAnswer;
+            SendToget = sendToget;
+            ToCountAnswer = toCountAnswer;
             Grid = grid;
             Keys = keys;
             Word = word;
             Clues = clues;
             Legend = legend;
+            SendTo = sendTo;
             Notification = notification;
         }
 
-        public Competitions(int contestNum, string sendFrom, int sendFromTimer, string sendToget, int sendToTimer, string grid, string keys, string word, string clues, string legend, string[] sendTo, Notifications notification)
+        public Competitions(int contestNum, string sendFrom, int fromCountAnswer, string sendToget, int toCountAnswer, string grid, string keys, string word, string clues, string legend, string[] sendTo, Notifications notification)
         {
             ContestNum = contestNum;
             SendFrom = sendFrom;
-            SendFromTimer = sendFromTimer;
+            FromCountAnswer = fromCountAnswer;
             SendToget = sendToget;
-            SendToTimer = sendToTimer;
+            ToCountAnswer = toCountAnswer;
             Grid = grid;
             Keys = keys;
             Word = word;
@@ -58,10 +59,10 @@ namespace Tashbetzometry.Models
         }
 
         public int ContestNum { get => contestNum; set => contestNum = value; }
-        public string SendToget { get => sendToget; set => sendToget = value; }
         public string SendFrom { get => sendFrom; set => sendFrom = value; }
-        public int SendFromTimer { get => sendFromTimer; set => sendFromTimer = value; }
-        public int SendToTimer { get => sendToTimer; set => sendToTimer = value; }
+        public int FromCountAnswer { get => fromCountAnswer; set => fromCountAnswer = value; }
+        public string SendToget { get => sendToget; set => sendToget = value; }
+        public int ToCountAnswer { get => toCountAnswer; set => toCountAnswer = value; }
         public string Grid { get => grid; set => grid = value; }
         public string Keys { get => keys; set => keys = value; }
         public string Word { get => word; set => word = value; }

@@ -1761,7 +1761,7 @@ WHERE H.HelpNum = {helpNum};";
                 string command;
                 StringBuilder sb = new StringBuilder();
                 string prefix = $"Declare @ContestNum int;" +
-                                $" INSERT INTO Competitions VALUES ('{c.SendFrom}', '{c.SendTo[0]}','{c.Grid}', '{c.Keys}', '{c.Word}', '{c.Clues}', '{c.Legend}, {c.SendFromTimer}, {c.SendToTimer}');" +
+                                $" INSERT INTO Competitions VALUES ('{c.SendFrom}', '{c.SendTo[0]}','{c.Grid}', '{c.Keys}', '{c.Word}', '{c.Clues}', '{c.Legend}, {c.FromCountAnswer}, {c.ToCountAnswer}');" +
                                 $" select @ContestNum = SCOPE_IDENTITY()" +
                                 $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo[0]}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"},{"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
                 command = prefix + sb.ToString();
@@ -1772,17 +1772,17 @@ WHERE H.HelpNum = {helpNum};";
                 string str = "";
                 for (int i = 0; i < c.SendTo.Length; i++)
                 {
-                    str += Competitions(c.SendFrom, c.SendTo[i], c.Grid, c.Keys, c.Word, c.Clues, c.Legend, c.SendFromTimer, c.SendToTimer, c.Notification.Type, c.Notification.Text, SQLFormat);
+                    str += Competitions(c.SendFrom, c.SendTo[i], c.Grid, c.Keys, c.Word, c.Clues, c.Legend, c.FromCountAnswer, c.ToCountAnswer, c.Notification.Type, c.Notification.Text, SQLFormat);
                 }
                 return str;
             }
         }
-        private string Competitions(string sendFrom, string sendTo, string grid, string keys, string word, string clues, string legend, int sendFromTimer, int sendToTimer, string type, string text, string d)
+        private string Competitions(string sendFrom, string sendTo, string grid, string keys, string word, string clues, string legend, int fromCountAnswer, int toCountAnswer, string type, string text, string d)
         {
             return $"Declare @ContestNum int;" +
-                                $"INSERT INTO Competitions VALUES ('{sendFrom}', '{sendTo[0]}','{grid}', '{keys}', '{word}', '{clues}', '{legend}','{sendFromTimer}', '{sendToTimer}');" +
+                                $"INSERT INTO Competitions VALUES ('{sendFrom}', '{sendTo[0]}','{grid}', '{keys}', '{word}', '{clues}', '{legend}','{fromCountAnswer}', '{toCountAnswer}');" +
                                 $"select @ContestNum = SCOPE_IDENTITY()" +
-                                $"INSERT INTO Notifications VALUES ('{sendFrom}', '{sendTo[0]}','{grid}', '{keys}', '{word}', '{clues}', '{legend}','{sendFromTimer}','{sendToTimer}', {"NULL"},{"NULL"}, @ContestNum, {d}, {0}, {0});";
+                                $"INSERT INTO Notifications VALUES ('{sendFrom}', '{sendTo[0]}','{grid}', '{keys}', '{word}', '{clues}', '{legend}','{toCountAnswer}','{toCountAnswer}', {"NULL"},{"NULL"}, @ContestNum, {d}, {0}, {0});";
         }
 
 

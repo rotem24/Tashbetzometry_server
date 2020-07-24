@@ -1192,8 +1192,9 @@ WHERE SC.SendFrom='{mail}' or SC.SendTo='{mail}'";
             try
             {
                 con = Connect("DBConnectionString");
-                String selectSTR = $@"SELECT * FROM UserCreateCross 
-WHERE UserMail='{mail}'";
+                String selectSTR = $@"SELECT UC.CrossNum, UC.UserMail,U.FirstName,U.LastName, UC.Grid, UC.Keys,UC.Words,UC.Clues,UC.Legend
+                                      FROM UserCreateCross UC inner join [User] U on UC.UserMail = U.Mail
+                                      WHERE UserMail='{mail}'";
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
@@ -1201,6 +1202,9 @@ WHERE UserMail='{mail}'";
                 {
                     CreateCross UCC = new CreateCross();
                     UCC.CrossNum = (int)(dr["CrossNum"]);
+                    UCC.UserMail = Convert.ToString(dr["UserMail"]);
+                    UCC.FirstName = Convert.ToString(dr["FirstName"]);
+                    UCC.LastName = Convert.ToString(dr["LastName"]);
                     UCC.Grid = Convert.ToString(dr["Grid"]);
                     UCC.Keys = Convert.ToString(dr["Keys"]);
                     UCC.Words = Convert.ToString(dr["Words"]);

@@ -23,10 +23,10 @@ namespace Tashbetzometry.Controllers
         }
 
         // POST api/<controller>
-        public void Post([FromBody]Competitions c)
+        public int Post([FromBody]Competitions c)
         {
             Competitions competition = new Competitions();
-            competition.PostCompetitions(c);
+            return competition.PostCompetitions(c);
         }
 
         // PUT api/<controller>/5

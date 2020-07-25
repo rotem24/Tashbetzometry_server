@@ -1756,16 +1756,16 @@ WHERE H.HelpNum = {helpNum};";
             DateTime date = DateTime.Now;
             string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
 
-                string command;
-                StringBuilder sb = new StringBuilder();
-                string prefix = $"Declare @ContestNum int;" +
-                                $" INSERT INTO Competitions VALUES ('{c.SendFrom}', {c.FromCountAnswer}, '{c.SendTo}', {c.ToCountAnswer}, '{c.Grid}', '{c.Keys}', '{c.Word}', '{c.Clues}', '{c.Legend}');" +
-                                $" select @ContestNum = SCOPE_IDENTITY()" +
-                                $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"}, {"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
-                command = prefix + sb.ToString();
-                return command; 
+            string command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $"Declare @ContestNum int;" +
+                            $" INSERT INTO Competitions VALUES ('{c.SendFrom}', {c.FromCountAnswer}, '{c.SendTo}', {c.ToCountAnswer}, '{c.Grid}', '{c.Keys}', '{c.Word}', '{c.Clues}', '{c.Legend}');" +
+                            $" select @ContestNum = SCOPE_IDENTITY()" +
+                            $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"}, {"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
+            command = prefix + sb.ToString();
+            return command;
         }
- 
+
 
         //עדכון טבלת עזרה מחבר כי החבר ענה והכנסת ההתראה לטבלת Notifications
         public int InsertHelpNotification(Notifications n)
@@ -1815,6 +1815,87 @@ WHERE H.HelpNum = {helpNum};";
             return command;
         }
 
+        //הבאת השתבצים ששותפו עבור המשתמש
+        public Competitions GetCompetitonCross(int crossNum)
+        {
+            SqlConnection con = null;
+            try
+            {
+                con = Connect("DBConnectionString");
+                String selectSTR = @"SELECT CrossNum, Grid, Keys, Words, Clues, Legend
+FROM [CrossWord] 
+
+WHERE CrossNum = '" + crossNum + "';";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
+                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                Competitions sc = new Competitions();
+                while (dr.Read())
+                {
+                    sc.ContestNum = (int)(dr["CrossNum"]);
+                    sc.Grid = Convert.ToString(dr["Grid"]);
+                    sc.Keys = Convert.ToString(dr["Keys"]);
+                    sc.Word = Convert.ToString(dr["Words"]);
+                    sc.Clues = Convert.ToString(dr["Clues"]);
+                    sc.Legend = Convert.ToString(dr["Legend"]);
+                }
+                return sc;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        ////הכנסת תשבץ תחרות שהתחיל משתמש מסוים לטבלה
+        //public int PostUserCompCross(Competitions UC)
+        //{
+        //    SqlConnection con;
+        //    SqlCommand cmd;
+        //    try
+        //    {
+        //        con = Connect("DBConnectionString");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // write to log
+        //        throw ex;
+        //    }
+        //    try
+        //    {
+        //        String cStr = BuildUserCompCrossCommand(UC);
+        //        cmd = CreateCommand(cStr, con);
+        //        int numEffected = cmd.ExecuteNonQuery();
+        //        return numEffected;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return 0;
+        //        throw (ex);
+        //    }
+        //    finally
+        //    {
+        //        if (con != null)
+        //        {
+        //            con.Close();
+        //        }
+        //    }
+        //}
+        //private string BuildUserCompCrossCommand(Competitions UC)
+        //{
+        //    string command;
+        //    StringBuilder sb = new StringBuilder();
+        //    string prefix = $"Declare @crossNum int;" + $"INSERT INTO UserCreateCross VALUES ('{UCC.UserMail}', '{UCC.Grid}', '{UCC.Keys}', '{UCC.Words}', '{UCC.Clues}', '{UCC.Legend}');";
+        //    command = prefix + sb.ToString();
+        //    return command;
+        //}
+
+        
 
 
     }

@@ -25,6 +25,16 @@ namespace Tashbetzometry.Models
 
         }
 
+        public Competitions(int contestNum, string grid, string keys, string word, string clues, string legend)
+        {
+            ContestNum = contestNum;
+            Grid = grid;
+            Keys = keys;
+            Word = word;
+            Clues = clues;
+            Legend = legend;
+        }
+
         public Competitions(string sendFrom, int fromCountAnswer, string sendTo, int toCountAnswer, string grid, string keys, string word, string clues, string legend, Notifications notification)
         {
             SendFrom = sendFrom;
@@ -54,6 +64,19 @@ namespace Tashbetzometry.Models
             Notification = notification;
         }
 
+        public Competitions(string sendFrom, int fromCountAnswer, string sendTo, int toCountAnswer, string grid, string keys, string word, string clues, string legend)
+        {
+            SendFrom = sendFrom;
+            FromCountAnswer = fromCountAnswer;
+            SendTo = sendTo;
+            ToCountAnswer = toCountAnswer;
+            Grid = grid;
+            Keys = keys;
+            Word = word;
+            Clues = clues;
+            Legend = legend;
+        }
+
         public int ContestNum { get => contestNum; set => contestNum = value; }
         public string SendFrom { get => sendFrom; set => sendFrom = value; }
         public int FromCountAnswer { get => fromCountAnswer; set => fromCountAnswer = value; }
@@ -71,6 +94,11 @@ namespace Tashbetzometry.Models
             DBService db = new DBService();
             int numAffected = db.PostCompetitions(competitions);
             return numAffected;
+        }
+        public Competitions GetCompetitonCross(int crossNum)
+        {
+            DBService db = new DBService();
+            return db.GetCompetitonCross(crossNum);
         }
 
     }

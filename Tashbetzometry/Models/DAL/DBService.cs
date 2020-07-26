@@ -1895,53 +1895,49 @@ WHERE H.HelpNum = {helpNum};";
             }
         }
 
-
-        ////הכנסת תשבץ תחרות שהתחיל משתמש מסוים לטבלה
-        //public int PostUserCompCross(Competitions UC)
-        //{
-        //    SqlConnection con;
-        //    SqlCommand cmd;
-        //    try
-        //    {
-        //        con = Connect("DBConnectionString");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // write to log
-        //        throw ex;
-        //    }
-        //    try
-        //    {
-        //        String cStr = BuildUserCompCrossCommand(UC);
-        //        cmd = CreateCommand(cStr, con);
-        //        int numEffected = cmd.ExecuteNonQuery();
-        //        return numEffected;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return 0;
-        //        throw (ex);
-        //    }
-        //    finally
-        //    {
-        //        if (con != null)
-        //        {
-        //            con.Close();
-        //        }
-        //    }
-        //}
-        //private string BuildUserCompCrossCommand(Competitions UC)
-        //{
-        //    string command;
-        //    StringBuilder sb = new StringBuilder();
-        //    string prefix = $"Declare @crossNum int;" + $"INSERT INTO UserCreateCross VALUES ('{UCC.UserMail}', '{UCC.Grid}', '{UCC.Keys}', '{UCC.Words}', '{UCC.Clues}', '{UCC.Legend}');";
-        //    command = prefix + sb.ToString();
-        //    return command;
-        //}
-
         
-
-
+        //עדכון מספר תשובות בטבלת תחרות
+        public int UpdateCompetitionCrossUser2(int contestNum, int toCountAnswer)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                string cStr = BuildUpdateCompetitionCrossUser2Command(contestNum, toCountAnswer);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildUpdateCompetitionCrossUser2Command(int contestNum, int toCountAnswer)
+        {
+            string command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $"UPDATE Competitions SET ToCountAnswer = {toCountAnswer} WHERE ContestNum = {contestNum};";
+            command = prefix + sb.ToString();
+            return command;
+        }
     }
 
 }

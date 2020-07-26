@@ -45,8 +45,12 @@ namespace Tashbetzometry.Controllers
         }
 
         // PUT api/<controller>/5
-        public void Put(int id, [FromBody]string value)
+        [HttpPut]
+        [Route("api/Competitions/User2/{ContestNum}/{ToCountAnswer}")]
+        public void Put(int contestNum, int toCountAnswer)
         {
+            Competitions c = new Competitions();
+            c.UpdateCompetitionCrossUser2(contestNum, toCountAnswer);
         }
 
         // DELETE api/<controller>/5

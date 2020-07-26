@@ -94,6 +94,12 @@ namespace Tashbetzometry.Models
             return db.GetCompetitonCrossForUser2(contestNum);
         }
 
+        public int UpdateCompetitionCrossUser2(int contestNum, int toCountAnswer)
+        {
+            DBService db = new DBService();
+            return db.UpdateCompetitionCrossUser2(contestNum, toCountAnswer);
+        }
+
 
 
     }

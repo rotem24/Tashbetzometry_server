@@ -1758,9 +1758,9 @@ WHERE H.HelpNum = {helpNum};";
 
                 string command;
                 StringBuilder sb = new StringBuilder();
-                string prefix = $"Declare @ContestNum int;" +
-                                $" INSERT INTO Competitions VALUES ('{c.SendFrom}', {c.FromCountAnswer}, '{c.SendTo}', {c.ToCountAnswer}, '{c.Grid}', '{c.Keys}', '{c.Word}', '{c.Clues}', '{c.Legend}');" +
-                                $" select @ContestNum = SCOPE_IDENTITY()" +
+                string prefix = $"Declare @ContestNum int; " +
+                                $" INSERT INTO Competitions VALUES ('{c.SendFrom}', {c.FromCountAnswer}, '{c.SendTo}', {c.ToCountAnswer}, {c.CrossNum}); " +
+                                $" select @ContestNum = SCOPE_IDENTITY() " +
                                 $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"}, {"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
                 command = prefix + sb.ToString();
                 return command; 

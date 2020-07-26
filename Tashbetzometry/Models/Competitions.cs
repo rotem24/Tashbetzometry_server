@@ -13,11 +13,7 @@ namespace Tashbetzometry.Models
         int fromCountAnswer;
         string sendTo;
         int toCountAnswer;
-        string grid;
-        string keys;
-        string word;
-        string clues;
-        string legend;
+        int crossNum;
         Notifications notification;
 
         public Competitions()
@@ -25,32 +21,24 @@ namespace Tashbetzometry.Models
 
         }
 
-        public Competitions(string sendFrom, int fromCountAnswer, string sendTo, int toCountAnswer, string grid, string keys, string word, string clues, string legend, Notifications notification)
+        public Competitions(string sendFrom, int fromCountAnswer, string sendTo, int toCountAnswer, int crossNum, Notifications notification)
         {
             SendFrom = sendFrom;
             FromCountAnswer = fromCountAnswer;
             SendTo = sendTo;
             ToCountAnswer = toCountAnswer;
-            Grid = grid;
-            Keys = keys;
-            Word = word;
-            Clues = clues;
-            Legend = legend;
+            CrossNum = crossNum;
             Notification = notification;
         }
 
-        public Competitions(int contestNum, string sendFrom, int fromCountAnswer, string sendTo, int toCountAnswer, string grid, string keys, string word, string clues, string legend, Notifications notification)
+        public Competitions(int contestNum, string sendFrom, int fromCountAnswer, string sendTo, int toCountAnswer, int crossNum, Notifications notification)
         {
             ContestNum = contestNum;
             SendFrom = sendFrom;
             FromCountAnswer = fromCountAnswer;
             SendTo = sendTo;
             ToCountAnswer = toCountAnswer;
-            Grid = grid;
-            Keys = keys;
-            Word = word;
-            Clues = clues;
-            Legend = legend;
+            CrossNum = crossNum;
             Notification = notification;
         }
 
@@ -59,12 +47,9 @@ namespace Tashbetzometry.Models
         public int FromCountAnswer { get => fromCountAnswer; set => fromCountAnswer = value; }
         public string SendTo { get => sendTo; set => sendTo = value; }
         public int ToCountAnswer { get => toCountAnswer; set => toCountAnswer = value; }
-        public string Grid { get => grid; set => grid = value; }
-        public string Keys { get => keys; set => keys = value; }
-        public string Word { get => word; set => word = value; }
-        public string Clues { get => clues; set => clues = value; }
-        public string Legend { get => legend; set => legend = value; }
+        public int CrossNum { get => crossNum; set => crossNum = value; }
         public Notifications Notification { get => notification; set => notification = value; }
+
 
         public int PostCompetitions(Competitions competitions)
         {

@@ -17,7 +17,7 @@ namespace Tashbetzometry.Controllers
         }
 
         // GET api/<controller>/5
-        public string Get(int id)
+        public List<Competitions> Get(int contestNum)
         {
             return "value";
         }

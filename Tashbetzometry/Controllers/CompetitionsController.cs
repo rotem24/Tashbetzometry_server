@@ -28,14 +28,14 @@ namespace Tashbetzometry.Controllers
             Competitions com = new Competitions();
             return com.GetCompetitonCross(crossnum);
         }
-   
+
         // POST api/<controller>
         public int Post([FromBody]Competitions c)
         {
             Competitions competition = new Competitions();
             return competition.PostCompetitions(c);
         }
-        
+
         // PUT api/<controller>/5
         public void Put(int id, [FromBody]string value)
         {

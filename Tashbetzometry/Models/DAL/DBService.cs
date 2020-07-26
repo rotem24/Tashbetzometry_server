@@ -1717,7 +1717,7 @@ WHERE H.HelpNum = {helpNum};";
         }
 
 
-        //עדכון טבלת תשחץ תחרות
+     //עדכון טבלת תשחץ תחרות
         public int PostCompetitions(Competitions competitions)
         {
             SqlConnection con;
@@ -1756,14 +1756,14 @@ WHERE H.HelpNum = {helpNum};";
             DateTime date = DateTime.Now;
             string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
 
-            string command;
-            StringBuilder sb = new StringBuilder();
-            string prefix = $"Declare @ContestNum int; " +
-                            $" INSERT INTO Competitions VALUES ('{c.SendFrom}', {c.FromCountAnswer}, '{c.SendTo}', {c.ToCountAnswer}, {c.CrossNum}); " +
-                            $" select @ContestNum = SCOPE_IDENTITY() " +
-                            $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"}, {"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
-            command = prefix + sb.ToString();
-            return command;
+                string command;
+                StringBuilder sb = new StringBuilder();
+                string prefix = $"Declare @ContestNum int; " +
+                                $" INSERT INTO Competitions VALUES ('{c.SendFrom}', {c.FromCountAnswer}, '{c.SendTo}', {c.ToCountAnswer}, {c.CrossNum}); " +
+                                $" select @ContestNum = SCOPE_IDENTITY() " +
+                                $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"}, {"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
+                command = prefix + sb.ToString();
+                return command; 
         }
 
 
@@ -1815,6 +1815,7 @@ WHERE H.HelpNum = {helpNum};";
             return command;
         }
 
+
         //הבאת השתבצים ששותפו עבור המשתמש
         public Competitions GetCompetitonCross(int crossNum)
         {
@@ -1823,9 +1824,7 @@ WHERE H.HelpNum = {helpNum};";
             {
                 con = Connect("DBConnectionString");
                 String selectSTR = @"SELECT CrossNum, Grid, Keys, Words, Clues, Legend
-FROM [CrossWord] 
-
-WHERE CrossNum = '" + crossNum + "';";
+                FROM [CrossWord] WHERE CrossNum = '" + crossNum + "';";
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
                 Competitions sc = new Competitions();
@@ -1834,7 +1833,7 @@ WHERE CrossNum = '" + crossNum + "';";
                     sc.ContestNum = (int)(dr["CrossNum"]);
                     sc.Grid = Convert.ToString(dr["Grid"]);
                     sc.Keys = Convert.ToString(dr["Keys"]);
-                    sc.Word = Convert.ToString(dr["Words"]);
+                    sc.Words = Convert.ToString(dr["Words"]);
                     sc.Clues = Convert.ToString(dr["Clues"]);
                     sc.Legend = Convert.ToString(dr["Legend"]);
                 }
@@ -1852,6 +1851,51 @@ WHERE CrossNum = '" + crossNum + "';";
                 }
             }
         }
+
+
+        //הבאת פרטים תשבץ תחרות ששותף
+        public Competitions GetCompetitonCrossForUser2(int contestNum)
+        {
+            SqlConnection con = null;
+            try
+            {
+                con = Connect("DBConnectionString");
+                String selectSTR = $@"select C.ContestNum, C.SendFrom, C.FromCountAnswer, C.SendTo, C.ToCountAnswer, C.CrossNum, CW.Grid, CW.Keys, CW.Words, CW.Clues,CW.Legend
+                                      from Competitions C inner join CrossWord CW on C.CrossNum = CW.CrossNum 
+                                      where ContestNum = {contestNum}";
+                SqlCommand cmd = new SqlCommand(selectSTR, con);
+                SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+                Competitions sc = new Competitions();
+                while (dr.Read())
+                {
+                    sc.ContestNum = (int)(dr["ContestNum"]);
+                    sc.SendFrom = Convert.ToString(dr["SendFrom"]);
+                    sc.FromCountAnswer = (int)(dr["FromCountAnswer"]);
+                    sc.SendTo = Convert.ToString(dr["SendTo"]);
+                    sc.ToCountAnswer = (int)(dr["ToCountAnswer"]);
+                    sc.CrossNum = (int)(dr["CrossNum"]);
+                    sc.Grid = Convert.ToString(dr["Grid"]);
+                    sc.Keys = Convert.ToString(dr["Keys"]);
+                    sc.Words = Convert.ToString(dr["Words"]);
+                    sc.Clues = Convert.ToString(dr["Clues"]);
+                    sc.Legend = Convert.ToString(dr["Legend"]);
+                }
+                return sc;
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+
+
         ////הכנסת תשבץ תחרות שהתחיל משתמש מסוים לטבלה
         //public int PostUserCompCross(Competitions UC)
         //{

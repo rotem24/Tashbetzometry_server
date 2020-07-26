@@ -29,6 +29,14 @@ namespace Tashbetzometry.Controllers
             return com.GetCompetitonCross(crossnum);
         }
 
+        [HttpGet]
+        [Route("api/Competitions/User2/{ContestNum}/")]
+        public Competitions GetCompetitionForUser2(int contestNum)
+        {
+            Competitions com = new Competitions();
+            return com.GetCompetitonCrossForUser2(contestNum);
+        }
+
         // POST api/<controller>
         public int Post([FromBody]Competitions c)
         {

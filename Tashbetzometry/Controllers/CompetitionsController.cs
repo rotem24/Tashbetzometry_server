@@ -16,11 +16,6 @@ namespace Tashbetzometry.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<controller>/5
-        public List<Competitions> Get(int contestNum)
-        {
-            return "value";
-        }
         [HttpGet]
         [Route("api/Competitions/{crossnum}/")]
         public Competitions GetCompetition(int crossnum)

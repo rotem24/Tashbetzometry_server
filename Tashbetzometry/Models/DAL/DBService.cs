@@ -2035,7 +2035,7 @@ WHERE H.HelpNum = {helpNum};";
 
             string command;
             StringBuilder sb = new StringBuilder();
-            string prefix = $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendTo}', '{n.Type}', '{n.Text}', {"NULL"}, {"NULL"}, {n.ContestNum}, '{SQLFormat}', {0}, {1});";
+            string prefix = $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendToGet}', '{n.Type}', '{n.Text}', {"NULL"}, {"NULL"}, {n.ContestNum}, '{SQLFormat}', {0}, {1});";
             command = prefix + sb.ToString();
             return command;
         }

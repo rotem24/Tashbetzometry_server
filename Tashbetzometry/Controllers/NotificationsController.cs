@@ -75,7 +75,7 @@ namespace Tashbetzometry.Controllers
             return n.DeleteNotification(serialNum);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("api/Notifications/Win/")]
         public int PostWin([FromBody] Notifications n)
         {

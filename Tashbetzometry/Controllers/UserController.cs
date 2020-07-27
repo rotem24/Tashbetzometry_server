@@ -84,6 +84,15 @@ namespace Tashbetzometry.Controllers
             u.UpdatePhotoDB(user);
         }
 
+        [HttpPut]
+        [Route("api/User/ScoreUser1")]
+        public void PutScoreUser1([FromBody]User user)
+        {
+            User u = new User();
+            u.UpdateScoreUser1DB(user);
+        }
+
+
         // DELETE api/<controller>/5
         public void Delete(int id)
         {

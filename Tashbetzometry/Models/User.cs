@@ -16,6 +16,7 @@ namespace Tashbetzometry.Models
 		string image;
         int score;
 		string theme;
+        bool isWin;
 
 		public User()
 		{
@@ -39,20 +40,28 @@ namespace Tashbetzometry.Models
 			Mail = mail;
 			Password = password;
 		}
-	
 
-		public string Mail { get => mail; set => mail = value; }
-		public string Password { get => password; set => password = value; }
+        public User(string mail, int score, bool isWin)
+        {
+            Mail = mail;
+            Score = score;
+            IsWin = isWin;
+        }
+
+        public string Mail { get => mail; set => mail = value; }
+        public int Score { get => score; set => score = value; }
+        public bool IsWin { get => isWin; set => isWin = value; }
+        public string Password { get => password; set => password = value; }
 		public string UserName { get => userName; set => userName = value; }
 		public string FirstName { get => firstName; set => firstName = value; }
 		public string LastName { get => lastName; set => lastName = value; }
 		public string Image { get => image; set => image = value; }
-        public int Score { get => score; set => score = value; }
 		public string Theme { get => theme; set => theme = value; }
+      
 
 
-		//login
-		public User GetUserFromDB(string mail, string password)
+        //login
+        public User GetUserFromDB(string mail, string password)
 		{
 			DBService db = new DBService();
 			return db.GetUserFromDB(mail, password);
@@ -111,8 +120,13 @@ namespace Tashbetzometry.Models
             DBService db = new DBService();
             return db.UpdatPhotoDB(user);
         }
-        
 
+        //עדכון ניקוד למשתמש1 בתחרות
+        public int UpdateScoreUser1DB(User user)
+        {
+            DBService db = new DBService();
+            return db.UpdateScoreUser1DB(user);
+        }
 
 
 

@@ -130,7 +130,12 @@ namespace Tashbetzometry.Models
             DBService db = new DBService();
             return db.InsertHelpNotification(n);
         }
-
+        
+        public int InsertWinNotification(Notifications n)
+        {
+            DBService db = new DBService();
+            return db.InsertWinNotification(n);
+        }
 
     }
 }

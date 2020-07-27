@@ -1717,7 +1717,7 @@ WHERE H.HelpNum = {helpNum};";
         }
 
 
-     //עדכון טבלת תשחץ תחרות
+        //עדכון טבלת תשחץ תחרות
         public int PostCompetitions(Competitions competitions)
         {
             SqlConnection con;
@@ -1756,14 +1756,14 @@ WHERE H.HelpNum = {helpNum};";
             DateTime date = DateTime.Now;
             string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
 
-                string command;
-                StringBuilder sb = new StringBuilder();
-                string prefix = $"Declare @ContestNum int; " +
-                                $" INSERT INTO Competitions VALUES ('{c.SendFrom}', {c.FromCountAnswer}, '{c.SendTo}', {c.ToCountAnswer}, {c.CrossNum}); " +
-                                $" select @ContestNum = SCOPE_IDENTITY() " +
-                                $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"}, {"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
-                command = prefix + sb.ToString();
-                return command; 
+            string command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $"Declare @ContestNum int; " +
+                            $" INSERT INTO Competitions VALUES ('{c.SendFrom}', {c.FromCountAnswer}, '{c.SendTo}', {c.ToCountAnswer}, {c.CrossNum}); " +
+                            $" select @ContestNum = SCOPE_IDENTITY() " +
+                            $" INSERT INTO Notifications VALUES ('{c.SendFrom}', '{c.SendTo}', '{c.Notification.Type}', '{c.Notification.Text}', {"NULL"}, {"NULL"}, @ContestNum, '{SQLFormat}', {0}, {0});";
+            command = prefix + sb.ToString();
+            return command;
         }
 
 
@@ -1895,7 +1895,7 @@ WHERE H.HelpNum = {helpNum};";
             }
         }
 
-        
+
         //עדכון מספר תשובות בטבלת תחרות
         public int UpdateCompetitionCrossUser2(int contestNum, int toCountAnswer)
         {
@@ -1938,8 +1938,108 @@ WHERE H.HelpNum = {helpNum};";
             command = prefix + sb.ToString();
             return command;
         }
-    }
 
+
+        //עדכון ניקוד למשתמש1 תחרות
+        public int UpdateScoreUser1DB(User user)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                string cStr = BuildUpdateScoreUser1Command(user);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildUpdateScoreUser1Command(User user)
+        {
+            if (user.IsWin)
+            {
+                string command;
+                StringBuilder sb = new StringBuilder();
+                string prefix = $"UPDATE [User] SET [Score] = Score + {user.Score}   WHERE mail = {user.Mail}";
+                command = prefix + sb.ToString();
+                return command;
+            }
+            else
+            {
+                string command;
+                StringBuilder sb = new StringBuilder();
+                string prefix = $"UPDATE [User] SET [Score] = Score - {user.Score}   WHERE mail = {user.Mail}";
+                command = prefix + sb.ToString();
+                return command;
+            }
+        }
+
+        //עדכון התראה למשתמש 1 שניצח/הפסיד בתחרות
+        public int InsertWinNotification(Notifications n)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                String cStr = BuildWinNotificationCommand(n);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildWinNotificationCommand(Notifications n)
+        {
+            DateTime date = DateTime.Now;
+            string SQLFormat = date.ToString("yyyy-MM-dd HH:mm:ss");
+
+            string command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $"INSERT INTO Notifications VALUES('{n.SendFrom}', '{n.SendTo}', '{n.Type}', '{n.Text}', {"NULL"}, {"NULL"}, {n.ContestNum}, '{SQLFormat}', {0}, {1});";
+            command = prefix + sb.ToString();
+            return command;
+        }
+    }
 }
 
 

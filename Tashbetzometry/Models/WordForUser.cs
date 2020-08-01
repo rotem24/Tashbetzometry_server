@@ -62,13 +62,20 @@ namespace Tashbetzometry.Models
             WordWithSpace = wordWithSpace;
         }
 
+        public WordForUser(string word, string wordWithSpace, string solution)
+        {
+            Word = word;
+            WordWithSpace = wordWithSpace;
+            Solution = solution;     
+        }
+
         public string UserMail { get => userMail; set => userMail = value; }
         public string KeyWord { get => keyWord; set => keyWord = value; }
         public string Word { get => word; set => word = value; }
         public string Solution { get => solution; set => solution = value; }
+        public string WordWithSpace { get => wordWithSpace; set => wordWithSpace = value; }
         public int NumOfShows { get => numOfShows; set => numOfShows = value; }
         public int NumOfHints { get => numOfHints; set => numOfHints = value; }
-        public string WordWithSpace { get => wordWithSpace; set => wordWithSpace = value; }
         public double Rate { get => rate; set => rate = value; }
         public string[] KeysArr { get => keysArr; set => keysArr = value; }
         
@@ -192,7 +199,13 @@ namespace Tashbetzometry.Models
             return db.GetUseHardWordsFromDB(mail);
 
         }
-  
 
-}
+        public int DeleteHardWord(string mail, string word, string solution)
+        {
+            DBService db = new DBService();
+            return db.DeleteHardWord(mail,word,solution);
+        }
+
+
+    }
 }

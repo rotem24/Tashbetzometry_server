@@ -1139,7 +1139,7 @@ WHERE SC.CrossNum = '" + crossNum + "';";
             try
             {
                 con = Connect("DBConnectionString");
-                String selectSTR = $@"  select distinct Words.WordWithSpace, Words.Solution
+                String selectSTR = $@"  select distinct  Words.Word, Words.WordWithSpace, Words.Solution
   from [dbo].[Hints] inner join Words on [dbo].[Hints].Wordkey= Words.[Key]
  where [dbo].[Hints].UserMail = '{mail}'";
 
@@ -1150,6 +1150,7 @@ WHERE SC.CrossNum = '" + crossNum + "';";
                 {
                     WordForUser a = new WordForUser(
 
+                        Convert.ToString(dr["Word"]),
                         Convert.ToString(dr["WordWithSpace"]),
                         Convert.ToString(dr["Solution"])
                        );
@@ -2039,6 +2040,51 @@ WHERE H.HelpNum = {helpNum};";
             command = prefix + sb.ToString();
             return command;
         }
+
+        
+        //מחיקת מילה קשה מטבלת Hints
+        public int DeleteHardWord(string mail, string word, string solution)
+        {
+            SqlConnection con;
+            SqlCommand cmd;
+            try
+            {
+                con = Connect("DBConnectionString");
+            }
+            catch (Exception ex)
+            {
+                // write to log
+                throw ex;
+            }
+            try
+            {
+                string cStr = BuildDeleteHardWordCommand(mail,word,solution);
+                cmd = CreateCommand(cStr, con);
+                int numEffected = cmd.ExecuteNonQuery();
+                return numEffected;
+            }
+            catch (Exception ex)
+            {
+                return 0;
+                throw (ex);
+            }
+            finally
+            {
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+        private string BuildDeleteHardWordCommand(string mail, string word, string solution)
+        {
+            string command;
+            StringBuilder sb = new StringBuilder();
+            string prefix = $" DELETE FROM [Hints] WHERE UserMail = '{mail}' and WordKey = '{word}-{solution}'";
+            command = prefix + sb.ToString();
+            return command;
+        }
+
     }
 }
 

@@ -29,6 +29,7 @@ namespace Tashbetzometry.Models
         public string Word { get => word; set => word = value; }
         public string Clue { get => clue; set => clue = value; }
 
+
         public int PostHintToDB(Hints hint)
         {
             string clueNoSpace = "";

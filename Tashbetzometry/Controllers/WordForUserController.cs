@@ -45,9 +45,13 @@ namespace Tashbetzometry.Controllers
 		{
 		}
 
-		// DELETE api/<controller>/5
-		public void Delete(int id)
+        // DELETE api/<controller>/5
+        [HttpDelete]
+        [Route("api/WordForUser/{mail}/{word}/{solution}")]
+        public int Delete(string mail, string word, string solution)
 		{
-		}
+            WordForUser n = new WordForUser();
+            return n.DeleteHardWord(mail, word,solution);
+        }
 	}
 }
